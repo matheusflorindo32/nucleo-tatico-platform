@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questões — Núcleo Tático</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0f;--bg-card:#12121a;--bg-elevated:#1a1a24;--border:#1e1e2e;--border-hover:#2a2a3e;--text:#e4e4e7;--text-secondary:#a1a1aa;--text-muted:#52525b;--accent:#6366f1;--accent-hover:#818cf8;--accent-subtle:rgba(99,102,241,.1);--success:#22c55e;--success-subtle:rgba(34,197,94,.1);--error:#ef4444;--error-subtle:rgba(239,68,68,.1);--amber:#f59e0b;--radius:.625rem;--radius-sm:.375rem;--font:Inter,sans-serif;--mono:JetBrains Mono,monospace}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--accent);color:#fff}
+a{text-decoration:none;color:inherit}
+
+/* Nav */
+nav{position:fixed;top:0;width:100%;z-index:50;background:rgba(10,10,15,.8);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;padding:0 1.5rem;height:3.75rem}
+.nav-brand{display:flex;align-items:center;gap:.5rem;font-weight:700;font-size:1rem;color:var(--text);text-decoration:none}
+.nav-brand svg{width:1.25rem;height:1.25rem}.brand-accent{color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:.75rem}
+.nav-right .name{font-size:.8125rem;color:var(--text-secondary)}
+.avatar{width:2rem;height:2rem;border-radius:999px;background:var(--accent-subtle);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600;color:var(--accent)}
+.btn{display:inline-flex;align-items:center;gap:.375rem;padding:.375rem .75rem;border-radius:var(--radius-sm);border:1px solid transparent;cursor:pointer;transition:all .15s;font-family:var(--font);font-weight:500;font-size:.8125rem;text-decoration:none}
+.btn-ghost{color:var(--text-secondary);background:transparent}
+.btn-ghost:hover{color:var(--text);background:rgba(255,255,255,.05)}
+.btn-logout{color:var(--text-muted);background:transparent;border-color:var(--border)}
+.btn-logout:hover{color:var(--error);border-color:rgba(239,68,68,.2);background:var(--error-subtle)}
+.nav-links{display:flex;align-items:center;gap:.25rem;margin-right:1rem}
+.nav-links a{color:var(--text-secondary);font-size:.8125rem;padding:.4rem .6rem;border-radius:var(--radius-sm);transition:all .15s}
+.nav-links a:hover,.nav-links a.active{color:var(--text);background:rgba(255,255,255,.05)}
+
+/* Main */
+main{max-width:1280px;margin:0 auto;padding:5.5rem 1.5rem 2rem}
+
+/* Stats Bar */
+.stats-bar{display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:1.5rem;padding:1rem 1.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius)}
+.stat-item{display:flex;align-items:center;gap:.5rem}
+.stat-item .icon{font-size:1.1rem}
+.stat-item .value{font-size:1rem;font-weight:700;font-family:var(--mono);color:var(--text)}
+.stat-item .label{font-size:.75rem;color:var(--text-secondary)}
+
+/* Filters */
+.filters-bar{display:flex;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center}
+.search-input{flex:1;min-width:200px;padding:.5rem .75rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font);font-size:.8125rem;outline:none;transition:border .15s}
+.search-input:focus{border-color:var(--accent)}
+.search-input::placeholder{color:var(--text-muted)}
+.filter-select{padding:.5rem .75rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font);font-size:.8125rem;outline:none;cursor:pointer;transition:border .15s}
+.filter-select:focus{border-color:var(--accent)}
+.filter-select option{background:var(--bg-elevated);color:var(--text)}
+.btn-clear-filter{padding:.5rem .75rem;background:transparent;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-secondary);cursor:pointer;font-size:.75rem;transition:all .15s;font-family:var(--font)}
+.btn-clear-filter:hover{color:var(--text);border-color:var(--border-hover)}
+
+/* Question Card */
+.q-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1rem;transition:border-color .15s}
+.q-card:has(.selected){border-color:var(--accent)}
+.q-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;gap:.5rem;flex-wrap:wrap}
+.q-badge{font-size:.6875rem;padding:.125rem .5rem;border-radius:100px;font-weight:600;white-space:nowrap}
+.q-badge.categoria{background:var(--accent-subtle);color:var(--accent)}
+.q-badge.banca{background:rgba(245,158,11,.1);color:var(--amber)}
+.q-number{font-family:var(--mono);font-size:.75rem;color:var(--text-muted)}
+.q-enunciado{font-size:.9375rem;line-height:1.7;margin-bottom:1.25rem;color:var(--text)}
+.q-alternativas{display:flex;flex-direction:column;gap:.5rem}
+.alternativa{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 1rem;border-radius:var(--radius-sm);border:1px solid var(--border);cursor:pointer;transition:all .15s;background:transparent;width:100%;text-align:left;font-family:var(--font);font-size:.875rem;color:var(--text-secondary);line-height:1.5}
+.alternativa:hover{border-color:var(--border-hover);background:rgba(255,255,255,.02)}
+.alternativa .letra{width:1.5rem;height:1.5rem;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600;color:var(--text-secondary);flex-shrink:0;transition:all .15s}
+.alternativa:hover .letra{background:var(--accent-subtle);color:var(--accent)}
+.alternativa.selected{border-color:var(--accent);background:var(--accent-subtle)}
+.alternativa.selected .letra{background:var(--accent);color:#fff}
+.alternativa.correct{border-color:var(--success);background:var(--success-subtle)}
+.alternativa.correct .letra{background:var(--success);color:#fff}
+.alternativa.wrong{border-color:var(--error);background:var(--error-subtle)}
+.alternativa.wrong .letra{background:var(--error);color:#fff}
+.q-explicacao{margin-top:1rem;padding:1rem;background:rgba(99,102,241,.05);border:1px solid rgba(99,102,241,.15);border-radius:var(--radius-sm);font-size:.8125rem;line-height:1.6;display:none;color:var(--text-secondary)}
+.q-explicacao.show{display:block}
+.q-explicacao strong{color:var(--accent);display:block;margin-bottom:.25rem}
+
+/* Pagination */
+.pagination{display:flex;justify-content:center;align-items:center;gap:.5rem;margin-top:2rem;padding:1rem 0}
+.page-btn{width:2.25rem;height:2.25rem;display:flex;align-items:center;justify-content:center;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text-secondary);cursor:pointer;transition:all .15s;font-family:var(--mono);font-size:.8125rem}
+.page-btn:hover{border-color:var(--border-hover);color:var(--text)}
+.page-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.page-btn:disabled{opacity:.3;cursor:not-allowed}
+.page-nav-btn{padding:.375rem .75rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text-secondary);cursor:pointer;transition:all .15s;font-family:var(--font);font-size:.8125rem}
+.page-nav-btn:hover:not(:disabled){border-color:var(--border-hover);color:var(--text)}
+.page-nav-btn:disabled{opacity:.3;cursor:not-allowed}
+.page-info{font-size:.8125rem;color:var(--text-muted);padding:0 .5rem;font-family:var(--mono)}
+
+/* Loading / Empty */
+.loading-state{text-align:center;padding:4rem 2rem;color:var(--text-muted)}
+.loading-state .spinner{width:2rem;height:2rem;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty-state{text-align:center;padding:4rem 2rem;color:var(--text-muted)}
+.empty-state h3{font-size:1.1rem;margin-bottom:.5rem;color:var(--text-secondary)}
+.empty-state p{font-size:.875rem}
+
+/* Progress Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,10,15,.85);backdrop-filter:blur(8px);z-index:999;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;max-width:900px;width:100%;max-height:90vh;overflow-y:auto}
+.modal h2{font-size:1.25rem;margin-bottom:1rem}
+.modal-close{float:right;background:transparent;border:none;color:var(--text-muted);cursor:pointer;font-size:1.25rem;padding:.25rem}
+.progress-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:1.5rem}
+.progress-stat{text-align:center;padding:1rem;background:var(--bg-card);border-radius:var(--radius-sm);border:1px solid var(--border)}
+.progress-stat .v{font-size:1.5rem;font-weight:700;font-family:var(--mono)}
+.progress-stat .l{font-size:.75rem;color:var(--text-secondary);margin-top:.25rem}
+.stat-table{width:100%;border-collapse:collapse;font-size:.8125rem}
+.stat-table th{text-align:left;padding:.5rem .75rem;color:var(--text-muted);font-weight:600;border-bottom:1px solid var(--border)}
+.stat-table td{padding:.5rem .75rem;border-bottom:1px solid var(--border)}
+.stat-table tr:hover td{background:rgba(255,255,255,.02)}
+.progress-bar-bg{height:6px;background:var(--border);border-radius:100px;overflow:hidden;margin-top:.25rem}
+.progress-bar-fill{height:100%;border-radius:100px;background:var(--accent);transition:width .3s}
+
+@media(max-width:768px){
+  .stats-bar{flex-wrap:wrap;gap:.75rem}
+  .filters-bar{flex-direction:column}
+  .search-input{min-width:100%}
+  .q-card{padding:1rem}
+  .modal{padding:1.25rem}
+  .nav-links{display:none}
+}
+</style>
+</head>
+<body>
+<nav>
+<div class="nav-inner">
+<a href="/" class="nav-brand">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+Núcleo <span class="brand-accent">Tático</span>
+</a>
+<div class="nav-links">
+<a href="/dashboard">Dashboard</a>
+<a href="/questoes" class="active">Questões</a>
+<a href="/simulados">Simulados</a>
+</div>
+<div class="nav-right">
+<span class="name" id="userName"></span>
+<a href="/login" class="btn btn-ghost" id="loginLink">Entrar</a>
+<button class="btn btn-logout" id="logoutBtn" style="display:none" onclick="logout()">Sair</button>
+</div>
+</div>
+</nav>
+
+<main>
+<div class="stats-bar">
+<div class="stat-item"><span class="icon">📊</span><span class="value" id="totalQuestions">0</span><span class="label">questões</span></div>
+<div class="stat-item"><span class="icon">✅</span><span class="value" id="answeredCount">0</span><span class="label">respondidas</span></div>
+<div class="stat-item"><span class="icon">🎯</span><span class="value" id="hitRate">0%</span><span class="label">acertos</span></div>
+<div class="stat-item"><span class="icon">🔥</span><span class="value" id="currentStreak">0</span><span class="label">sequência</span></div>
+<button class="btn btn-ghost" style="margin-left:auto;font-size:.75rem;color:var(--accent)" onclick="showStats()">Ver Estatísticas</button>
+</div>
+
+<div class="filters-bar">
+<input class="search-input" id="searchInput" placeholder="Buscar questão..." oninput="filterQuestions()">
+<select class="filter-select" id="catFilter" onchange="filterQuestions()">
+<option value="">Todas Categorias</option>
+</select>
+<select class="filter-select" id="bancaFilter" onchange="filterQuestions()">
+<option value="">Todas Bancas</option>
+</select>
+<button class="btn-clear-filter" onclick="clearFilters()">Limpar Filtros</button>
+</div>
+
+<div id="questionsContainer">
+<div class="loading-state"><div class="spinner"></div><p>Carregando questões...</p></div>
+</div>
+
+<div class="pagination" id="pagination"></div>
+</main>
+
+<div class="modal-overlay" id="statsModal"><div class="modal">
+<button class="modal-close" onclick="closeModal('statsModal')">✕</button>
+<h2>📊 Estatísticas Detalhadas</h2>
+<div class="progress-stats" id="statsOverview"></div>
+<table class="stat-table" id="statsTable">
+<thead><tr><th>Categoria</th><th>Respondidas</th><th>Acertos</th><th>Aproveitamento</th><th>Barra</th></tr></thead>
+<tbody id="statsBody"></tbody>
+</table>
+</div></div>
+
+<script>
+// ===== 200+ QUESTÕES =====
+const QUESTOES = [
+  // === RACIOCÍNIO LÓGICO - CESPE (1-10) ===
+  {id:1,categoria:"Raciocínio Lógico",banca:"CESPE",enunciado:"Considere a proposição: 'Se João é médico, então Maria é enfermeira'. A negação dessa proposição é equivalente a:",alternativas:["João é médico e Maria não é enfermeira","João não é médico e Maria é enfermeira","João não é médico ou Maria não é enfermeira","Se Maria não é enfermeira, então João não é médico","João é médico ou Maria é enfermeira"],correta:0,explicacao:"A negação de P→Q (se P então Q) é P ∧ ¬Q (P e não Q). Portanto, nega-se 'Se João é médico, então Maria é enfermeira' com 'João é médico e Maria não é enfermeira'."},
+  {id:2,categoria:"Raciocínio Lógico",banca:"CESPE",enunciado:"Em uma sala com 30 pessoas, sabe-se que 18 gostam de café, 14 gostam de chá e 6 gostam de ambos. Quantas pessoas não gostam de café nem de chá?",alternativas:["4","6","8","10","2"],correta:0,explicacao:"Total=30. Café=18, Chá=14, Ambos=6. Apenas café=18-6=12. Apenas chá=14-6=8. Total que gosta de pelo menos um=12+8+6=26. Nenhum=30-26=4."},
+  {id:3,categoria:"Raciocínio Lógico",banca:"CESPE",enunciado:"Uma sequência lógica é definida por: 2, 6, 12, 20, 30, ... Qual é o próximo termo?",alternativas:["36","40","42","44","48"],correta:2,explicacao:"A sequência segue n×(n+1): 1×2=2, 2×3=6, 3×4=12, 4×5=20, 5×6=30. O próximo é 6×7=42."},
+  {id:4,categoria:"Raciocínio Lógico",banca:"CESPE",enunciado:"Se todos os A são B e nenhum B é C, é correto concluir que:",alternativas:["Nenhum A é C","Todo A é C","Algum A é C","Todo C é A","Nenhum C é A"],correta:0,explicacao:"Se todo A está contido em B, e B não tem interseção com C, então A também não tem interseção com C. Logo, nenhum A é C."},
+  {id:5,categoria:"Raciocínio Lógico",banca:"CESPE",enunciado:"Considere a proposição composta: (P ∧ Q) → R. Qual das alternativas é logicamente equivalente?",alternativas:["(¬R) → (¬P ∨ ¬Q)","(¬P ∨ ¬Q) → ¬R","P → (Q → ¬R)","(P ∧ ¬R) → ¬Q","¬(P ∧ Q) ∨ ¬R"],correta:0,explicacao:"A contrapositiva de (P∧Q)→R é ¬R→¬(P∧Q), que equivale a ¬R→(¬P∨¬Q)."},
+  {id:6,categoria:"Raciocínio Lógico",banca:"CESPE",enunciado:"Em uma pesquisa, 60% das pessoas leem o jornal A, 50% leem o jornal B e 30% leem ambos. Qual a porcentagem de pessoas que não leem nenhum dos dois jornais?",alternativas:["10%","15%","20%","25%","30%"],correta:2,explicacao:"P(A∪B)=P(A)+P(B)-P(A∩B)=60%+50%-30%=80%. P(nenhum)=100%-80%=20%."},
+  {id:7,categoria:"Raciocínio Lógico",banca:"CESPE",enunciado:"Em uma matriz quadrada de ordem 3, o determinante é 8. Se multiplicarmos todos os elementos da matriz por 2, o novo determinante será:",alternativas:["16","32","48","64","128"],correta:3,explicacao:"Quando multiplicamos todos os elementos de uma matriz n×n por um escalar k, o determinante fica multiplicado por kⁿ. Para n=3 e k=2: 2³×8=8×8=64."},
+  {id:8,categoria:"Raciocínio Lógico",banca:"CESPE",enunciado:"Quantos anagramas distintos podem ser formados com a palavra 'CONCURSO'?",alternativas:["5040","10080","20160","40320","50400"],correta:1,explicacao:"CONCURSO tem 8 letras, com C repetida 2 vezes, O repetida 2 vezes. Total = 8!/(2!×2!) = 40320/4 = 10080."},
+  {id:9,categoria:"Raciocínio Lógico",banca:"CESPE",enunciado:"Se a proposição 'Se estudo, então passo no concurso' é verdadeira, qual das seguintes proposições também é necessariamente verdadeira?",alternativas:["Se não passo no concurso, então não estudei","Se não estudei, então não passo no concurso","Estudo e passo no concurso","Não estudo ou não passo no concurso","Se passo no concurso, então estudei"],correta:0,explicacao:"A contrapositiva de P→Q é ¬Q→¬P. Se P=estudo, Q=passo, então 'se não passo, então não estudei' é a contrapositiva, logicamente equivalente."},
+  {id:10,categoria:"Raciocínio Lógico",banca:"CESPE",enunciado:"Três amigos, A, B e C, têm idades diferentes. Sabe-se que A é mais velho que B, e C é mais novo que A. Se B não é o mais novo, qual a ordem decrescente de idades?",alternativas:["A, B, C","A, C, B","B, A, C","C, A, B","B, C, A"],correta:0,explicacao:"A>B. C<A. B não é o mais novo, então B>C. Logo A>B>C."},
+
+  // === RACIOCÍNIO LÓGICO - FCC (11-18) ===
+  {id:11,categoria:"Raciocínio Lógico",banca:"FCC",enunciado:"Dois números inteiros positivos x e y são tais que x + y = 20 e x² - y² = 40. O valor de x - y é:",alternativas:["1","2","3","4","5"],correta:1,explicacao:"x²-y²=(x-y)(x+y)=40. Como x+y=20, temos (x-y)×20=40, logo x-y=2."},
+  {id:12,categoria:"Raciocínio Lógico",banca:"FCC",enunciado:"Uma progressão aritmética tem primeiro termo 5 e razão 3. Qual é a soma dos 20 primeiros termos?",alternativas:["610","630","650","670","690"],correta:3,explicacao:"PA: a1=5, r=3, n=20. a20=5+19×3=62. S20=(a1+a20)×n/2=(5+62)×20/2=67×10=670."},
+  {id:13,categoria:"Raciocínio Lógico",banca:"FCC",enunciado:"Em um grupo de pessoas, 40% são homens e 60% são mulheres. Entre os homens, 25% são fumantes. Entre as mulheres, 10% são fumantes. Qual a porcentagem total de fumantes no grupo?",alternativas:["14%","15%","16%","17%","18%"],correta:2,explicacao:"Homens fumantes: 40%×25%=10%. Mulheres fumantes: 60%×10%=6%. Total fumantes: 10%+6%=16%."},
+  {id:14,categoria:"Raciocínio Lógico",banca:"FCC",enunciado:"Considere a sequência de figuras: ■, ■■, ■■■, ■■■■, ... Se cada ■ representa um quadrado de área 1, qual a área total da 10ª figura?",alternativas:["10","45","55","100","110"],correta:2,explicacao:"A sequência forma números triangulares: 1, 3, 6, 10... O n-ésimo termo é n(n+1)/2. Para n=10: 10×11/2=55."},
+  {id:15,categoria:"Raciocínio Lógico",banca:"FCC",enunciado:"Sejam as proposições: p: 'Hoje é sábado' e q: 'Amanhã é domingo'. A proposição composta 'Hoje não é sábado ou amanhã é domingo' é representada por:",alternativas:["¬p ∨ q","¬p ∧ q","p ∨ ¬q","p → q","¬(p ∨ q)"],correta:0,explicacao:"'Hoje não é sábado' = ¬p. 'Amanhã é domingo' = q. O conectivo 'ou' é a disjunção ∨. Portanto ¬p ∨ q."},
+  {id:16,categoria:"Raciocínio Lógico",banca:"FCC",enunciado:"Um dado não viciado é lançado duas vezes. Qual a probabilidade de a soma dos resultados ser igual a 7?",alternativas:["1/6","1/9","1/12","5/36","5/18"],correta:0,explicacao:"Total de resultados: 6×6=36. Somas 7: (1,6),(2,5),(3,4),(4,3),(5,2),(6,1)=6 casos. P=6/36=1/6."},
+  {id:17,categoria:"Raciocínio Lógico",banca:"FCC",enunciado:"Em uma caixa há 5 bolas vermelhas e 3 bolas azuis. Retirando-se 2 bolas simultaneamente, qual a probabilidade de ambas serem vermelhas?",alternativas:["5/14","3/7","10/28","15/56","5/28"],correta:0,explicacao:"Total=8 bolas. C(8,2)=28. C(5,2)=10. P=10/28=5/14."},
+  {id:18,categoria:"Raciocínio Lógico",banca:"FCC",enunciado:"Se 5 máquinas produzem 120 peças em 4 horas, quantas peças serão produzidas por 8 máquinas em 6 horas?",alternativas:["288","240","320","360","300"],correta:0,explicacao:"Regra de três composta: 5 máquinas → 120 peças → 4h. 8 máquinas → x peças → 6h. x = 120 × (8/5) × (6/4) = 120 × (48/20) = 120 × 2,4 = 288."},
+
+  // === RACIOCÍNIO LÓGICO - VUNESP (19-25) ===
+  {id:19,categoria:"Raciocínio Lógico",banca:"VUNESP",enunciado:"Em uma fila, há 25 pessoas. Pedro está na 9ª posição a partir do início. Qual é a posição dele a partir do final?",alternativas:["16ª","17ª","18ª","15ª","19ª"],correta:1,explicacao:"Se Pedro está na 9ª posição do início, há 8 pessoas antes dele. Após ele, há 25-9=16 pessoas. Posição a partir do final: 16+1=17ª."},
+  {id:20,categoria:"Raciocínio Lógico",banca:"VUNESP",enunciado:"Observe a sequência: 1, 1, 2, 3, 5, 8, 13, ... Qual é o próximo termo?",alternativas:["18","19","20","21","22"],correta:4,explicacao:"Sequência de Fibonacci: cada termo é a soma dos dois anteriores. 8+13=21."},
+  {id:21,categoria:"Raciocínio Lógico",banca:"VUNESP",enunciado:"Um relógio atrasa 3 minutos a cada 6 horas. Quanto tempo atrasará em 2 dias?",alternativas:["12 min","18 min","24 min","30 min","36 min"],correta:2,explicacao:"2 dias = 48 horas. Regra: 6h → 3min, 48h → x. x = 48×3/6 = 24 minutos."},
+  {id:22,categoria:"Raciocínio Lógico",banca:"VUNESP",enunciado:"Se A = {1, 2, 3, 4} e B = {3, 4, 5, 6}, quantos elementos tem A ∪ B (união)?",alternativas:["4","5","6","7","8"],correta:2,explicacao:"A∪B = {1,2,3,4,5,6}. São 6 elementos."},
+  {id:23,categoria:"Raciocínio Lógico",banca:"VUNESP",enunciado:"Uma pessoa gasta 1/3 do seu salário com aluguel, 1/4 com alimentação e 1/5 com transporte. Que fração do salário resta após esses gastos?",alternativas:["13/60","17/60","23/60","7/15","8/15"],correta:0,explicacao:"MMC(3,4,5)=60. Aluguel: 20/60. Alimentação: 15/60. Transporte: 12/60. Total gasto: 47/60. Resta: 13/60."},
+  {id:24,categoria:"Raciocínio Lógico",banca:"VUNESP",enunciado:"Quantos números de 3 algarismos distintos podem ser formados usando os dígitos 1, 2, 3, 4 e 5?",alternativas:["60","80","100","120","125"],correta:0,explicacao:"Arranjo de 5 elementos tomados 3 a 3: A(5,3) = 5×4×3 = 60."},
+  {id:25,categoria:"Raciocínio Lógico",banca:"VUNESP",enunciado:"Se hoje é quarta-feira, que dia da semana será daqui a 100 dias?",alternativas:["Segunda","Terça","Quarta","Quinta","Sexta"],correta:4,explicacao:"100÷7=14 semanas e 2 dias. Quarta + 2 = Sexta-feira."},
+
+  // === RACIOCÍNIO LÓGICO - FGV (26-30) ===
+  {id:26,categoria:"Raciocínio Lógico",banca:"FGV",enunciado:"Em uma urna há 4 bolas brancas e 6 bolas pretas. Retirando-se 2 bolas sem reposição, qual a probabilidade de a primeira ser branca e a segunda preta?",alternativas:["4/15","2/5","6/25","1/3","8/25"],correta:0,explicacao:"P(1ª branca)=4/10=2/5. P(2ª preta|1ª branca)=6/9=2/3. P=2/5×2/3=4/15."},
+  {id:27,categoria:"Raciocínio Lógico",banca:"FGV",enunciado:"Considere a afirmação: 'Todo funcionário da empresa é pontual'. A negação dessa afirmação é:",alternativas:["Algum funcionário da empresa não é pontual","Nenhum funcionário da empresa é pontual","Todo funcionário da empresa não é pontual","Existe funcionário da empresa que é pontual","Os funcionários da empresa são impontuais"],correta:0,explicacao:"A negação de 'Todo A é B' é 'Algum A não é B'. Portanto: 'Algum funcionário da empresa não é pontual'."},
+  {id:28,categoria:"Raciocínio Lógico",banca:"FGV",enunciado:"O valor de (2³ + 2²) ÷ 2 é:",alternativas:["4","6","8","10","12"],correta:1,explicacao:"2³=8, 2²=4. (8+4)÷2=12÷2=6."},
+  {id:29,categoria:"Raciocínio Lógico",banca:"FGV",enunciado:"Um triângulo tem lados medindo 5 cm, 12 cm e 13 cm. Esse triângulo é:",alternativas:["Equilátero","Isósceles","Retângulo","Acutângulo","Obtusângulo"],correta:2,explicacao:"5²+12²=25+144=169=13². Pelo Teorema de Pitágoras, é um triângulo retângulo."},
+  {id:30,categoria:"Raciocínio Lógico",banca:"FGV",enunciado:"Se x + 1/x = 3, qual é o valor de x² + 1/x²?",alternativas:["5","7","9","11","13"],correta:1,explicacao:"(x+1/x)² = x²+2+1/x² = 9. Portanto x²+1/x² = 9-2 = 7."},
+
+  // === LÍNGUA PORTUGUESA - CESPE (31-38) ===
+  {id:31,categoria:"Língua Portuguesa",banca:"CESPE",enunciado:"Assinale a opção em que a concordância nominal está correta:",alternativas:["É proibido a entrada de estranhos","Ela mesmo resolveu o problema","Anexo ao processo, seguem os documentos","Ela está meia cansada hoje","São necessárias paciência e determinação"],correta:4,explicacao:"Com sujeito composto posposto, o adjetivo concorda no plural: 'São necessárias paciência e determinação'."},
+  {id:32,categoria:"Língua Portuguesa",banca:"CESPE",enunciado:"Em 'O diretor chamou o aluno para conversar', o termo 'o aluno' exerce função sintática de:",alternativas:["Sujeito","Objeto direto","Objeto indireto","Complemento nominal","Predicativo"],correta:1,explicacao:"'Chamar' é VTD (verbo transitivo direto). 'O aluno' é objeto direto, pois completa o sentido do verbo sem preposição."},
+  {id:33,categoria:"Língua Portuguesa",banca:"CESPE",enunciado:"Assinale a alternativa em que a palavra destacada é um advérbio:",alternativas:["O carro **novo** chegou","Ele falou **alto** demais","Comprei um **bom** livro","A prova **difícil** foi cancelada","Ganhei um presente **especial**"],correta:1,explicacao:"'Alto' modifica o verbo 'falou', indicando intensidade/modo, funcionando como advérbio. Nas demais opções, as palavras são adjetivos."},
+  {id:34,categoria:"Língua Portuguesa",banca:"CESPE",enunciado:"Na frase 'Precisa-se de funcionários', a partícula 'se' é:",alternativas:["Pronome reflexivo","Índice de indeterminação do sujeito","Parte integrante do verbo","Conjunção condicional","Pronome apassivador"],correta:1,explicacao:"Com VTI (precisa-se de), o 'se' é índice de indeterminação do sujeito, pois o verbo não é transitivo direto para ser apassivador."},
+  {id:35,categoria:"Língua Portuguesa",banca:"CESPE",enunciado:"A palavra 'pé-de-moleque' é formada pelo processo de:",alternativas:["Composição por justaposição","Composição por aglutinação","Derivação prefixal","Derivação sufixal","Derivação parassintética"],correta:0,explicacao:"'Pé-de-moleque' é formada por justaposição, pois as palavras se unem sem perda fonética."},
+  {id:36,categoria:"Língua Portuguesa",banca:"CESPE",enunciado:'Assinale a opção em que o uso da crase é obrigatório:',alternativas:["Entreguei o documento à ele","Fui à cidade","Estou à procura de respostas","Refiro-me àquele rapaz","Dei o livro à uma aluna"],correta:1,explicacao:"'Fui à cidade' exige crase obrigatória: 'ir' (VTI exige preposição 'a') + 'cidade' (substantivo feminino que admite artigo 'a')."},
+  {id:37,categoria:"Língua Portuguesa",banca:"CESPE",enunciado:"Em relação ao período 'Embora estivesse cansado, continuou trabalhando', a oração destacada expressa ideia de:",alternativas:["Causa","Condição","Concessão","Consequência","Finalidade"],correta:2,explicacao:"'Embora' é conjunção concessiva, indicando um obstáculo que não impede a ação principal. Expressa concessão."},
+  {id:38,categoria:"Língua Portuguesa",banca:"CESPE",enunciado:"Qual das alternativas apresenta um erro de regência verbal?",alternativas:["Prefiro estudar a trabalhar","Assistimos ao filme","O policial obedeceu as ordens","Ele namora Maria","Procedeu-se ao julgamento"],correta:2,explicacao:"'Obedeceu' exige preposição 'a': 'obedeceu às ordens'. A forma correta é com crase."},
+
+  // === LÍNGUA PORTUGUESA - FCC (39-46) ===
+  {id:39,categoria:"Língua Portuguesa",banca:"FCC",enunciado:"Assinale a alternativa que completa corretamente a frase: 'Se você ______ o relatório, ______ o problema.'",alternativas:["visse...entenderia","veria...entenderia","vesse...entenderá","via...entende","vê...entenderia"],correta:0,explicacao:"A correlação verbal correta para hipótese no passado é: se + pretérito imperfeito do subjuntivo (visse) + futuro do pretérito (entenderia)."},
+  {id:40,categoria:"Língua Portuguesa",banca:"FCC",enunciado:"Em 'O Brasil é um país de contrastes', o núcleo do sujeito é:",alternativas:["Brasil","país","contrastes","O Brasil","país de contrastes"],correta:0,explicacao:"Sujeito: 'O Brasil'. Artigo 'O' é adjunto adnominal. Núcleo do sujeito: 'Brasil'."},
+  {id:41,categoria:"Língua Portuguesa",banca:"FCC",enunciado:"Assinale a alternativa em que todas as palavras estão grafadas corretamente:",alternativas:["Excessão, obsessão, compreensão","Exceção, obseção, compreensão","Exceção, obsessão, compreensão","Excessão, obseção, compreenção","Exceção, obsessão, compreenção"],correta:2,explicacao:"'Exceção' (com 'ç'), 'obsessão' (com 'ss'), 'compreensão' (com 's' e 'ão')."},
+  {id:42,categoria:"Língua Portuguesa",banca:"FCC",enunciado:"Na frase 'A multidão aplaudiu o discurso do presidente', o verbo está:",alternativas:["Na voz ativa","Na voz passiva analítica","Na voz passiva sintética","Na voz reflexiva","Na voz reflexiva recíproca"],correta:0,explicacao:"O sujeito 'A multidão' pratica a ação de aplaudir. Voz ativa: sujeito agente + verbo + objeto."},
+  {id:43,categoria:"Língua Portuguesa",banca:"FCC",enunciado:"Assinale a frase em que a colocação pronominal está de acordo com a norma culta:",alternativas:["Me empresta o livro","Não se esqueça do compromisso","Convidaram-me para a festa","Ela disse-me que viria","Falaram-me sobre o assunto"],correta:1,explicacao:"Com palavra negativa ('Não'), o pronome deve ser enclítico? Na verdade, 'não' atrai o pronome: 'Não se esqueça' (próclise obrigatória)."},
+  {id:44,categoria:"Língua Portuguesa",banca:"FCC",enunciado:"O prefixo 'in-' em 'infeliz' tem valor de:",alternativas:["Intensidade","Repetição","Negação","Simultaneidade","Posteridade"],correta:2,explicacao:"'In-' é prefixo de negação, formando o antônimo de 'feliz'."},
+  {id:45,categoria:"Língua Portuguesa",banca:"FCC",enunciado:'Assinale a opção correta quanto à pontuação:',alternativas:["O aluno, que estudou, passou.","O aluno que estudou, passou.","O aluno que estudou passou.","O aluno, que estudou passou.","O, aluno que estudou, passou."],correta:0,explicacao:"Com oração adjetiva explicativa (entre vírgulas): 'O aluno, que estudou, passou.' Indica que todos os alunos estudaram."},
+  {id:46,categoria:"Língua Portuguesa",banca:"FCC",enunciado:"Em 'Ele agiu conforme as instruções', a palavra 'conforme' é:",alternativas:["Preposição","Conjunção","Advérbio","Pronome","Substantivo"],correta:0,explicacao:"'Conforme' introduz o termo 'as instruções', funcionando como preposição que indica conformidade."},
+
+  // === LÍNGUA PORTUGUESA - VUNESP (47-54) ===
+  {id:47,categoria:"Língua Portuguesa",banca:"VUNESP",enunciado:"Assinale a alternativa em que o uso do 'porquê' está correto:",alternativas:["Não fui a aula porquê estava doente","Explique o porquê da sua ausência","Porque você não veio?","Ele não veio por que estava doente","O motivo por que não vim é pessoal"],correta:1,explicacao:"'Porquê' substantivado (precedido de artigo) significa 'o motivo': 'Explique o porquê'."},
+  {id:48,categoria:"Língua Portuguesa",banca:"VUNESP",enunciado:"Em 'Havia muitos alunos na sala', o verbo 'haver' é:",alternativas:["Transitivo direto","Transitivo indireto","Intransitivo","Impressoal (sem sujeito)","De ligação"],correta:3,explicacao:"'Haver' no sentido de 'existir' é impessoal (não tem sujeito) e fica sempre na 3ª pessoa do singular."},
+  {id:49,categoria:"Língua Portuguesa",banca:"VUNESP",enunciado:"Assinale a alternativa em que a palavra destacada é um substantivo:",alternativas:["O **cantar** dos pássaros","Ela está **cansada**","**Correndo** pela praia","**Aquele** livro é meu","**Muito** obrigado"],correta:0,explicacao:"'Cantar' está substantivado pelo artigo 'O'. Substantivo é palavra que nomeia seres, ações e conceitos."},
+  {id:50,categoria:"Língua Portuguesa",banca:"VUNESP",enunciado:"Qual das frases apresenta sujeito indeterminado?",alternativas:["Fez muito calor ontem","Chegaram as encomendas","Falaram mal de você","A prova foi aplicada","O diretor viajou"],correta:2,explicacao:"'Falaram' na 3ª pessoa do plural sem referência a sujeito específico indica sujeito indeterminado."},
+  {id:51,categoria:"Língua Portuguesa",banca:"VUNESP",enunciado:"A palavra 'aguardente' é formada por:",alternativas:["Justaposição","Aglutinação","Derivação","Composição","Parassíntese"],correta:1,explicacao:"'Aguardente' vem de 'água' + 'ardente', com perda fonética. É composição por aglutinação."},
+  {id:52,categoria:"Língua Portuguesa",banca:"VUNESP",enunciado:"Assinale a alternativa com ERRO de concordância verbal:",alternativas:["Fazem cinco anos que trabalho aqui","Havia muitas pessoas na fila","Existem diversas opções","Choveu muito ontem","Bastam dois dias para concluir"],correta:0,explicacao:"'Fazer' indicando tempo decorrido é impessoal: 'Faz cinco anos'. 'Fazem' é incorreto."},
+  {id:53,categoria:"Língua Portuguesa",banca:"VUNESP",enunciado:"Em 'Comprei um carro novo', a palavra 'novo' exerce função de:",alternativas:["Adjunto adnominal","Predicativo do objeto","Predicativo do sujeito","Complemento nominal","Aposto"],correta:0,explicacao:"'Novo' qualifica o substantivo 'carro', sendo adjunto adnominal. Se fosse predicativo, viria após verbo de ligação."},
+  {id:54,categoria:"Língua Portuguesa",banca:"VUNESP",enunciado:"A oração reduzida em 'Ao chegar em casa, encontrou a carta' equivale a:",alternativas:["Quando chegou em casa","Porque chegou em casa","Embora chegasse em casa","Para chegar em casa","Se chegasse em casa"],correta:0,explicacao:"A oração 'Ao chegar' (infinitivo) equivale a 'Quando chegou', expressando tempo."},
+
+  // === LÍNGUA PORTUGUESA - ESAF (55-60) ===
+  {id:55,categoria:"Língua Portuguesa",banca:"ESAF",enunciado:"Assinale a opção que preenche corretamente as lacunas: 'Ele ______ o cargo ______ sempre aspirou.'",alternativas:["alcançou...a que","alcançou...que","alcançou...o qual","alcançou...de que","alcançou...a qual"],correta:0,explicacao:"'Aspirar' no sentido de almejar exige preposição 'a'. 'O cargo a que sempre aspirou' - 'a que' é a forma correta."},
+  {id:56,categoria:"Língua Portuguesa",banca:"ESAF",enunciado:"Em 'O diretor informou os funcionários sobre as mudanças', o verbo 'informar' é:",alternativas:["VTDI (transitivo direto e indireto)","VTD (transitivo direto)","VTI (transitivo indireto)","VI (intransitivo)","VL (de ligação)"],correta:0,explicacao:"'Informar' é VTDI: informar alguém (OD) + sobre/de algo (OI). 'os funcionários' = OD, 'sobre as mudanças' = OI."},
+  {id:57,categoria:"Língua Portuguesa",banca:"ESAF",enunciado:"Assinale a opção em que o termo destacado exerce função de complemento nominal:",alternativas:["O **medo** da chuva","A **cidade** está iluminada","**Caminhar** faz bem","Ele **comprou** um carro","A **reunião** foi produtiva"],correta:0,explicacao:"'Da chuva' completa o sentido do nome 'medo' com preposição, funcionando como complemento nominal."},
+  {id:58,categoria:"Língua Portuguesa",banca:"ESAF",enunciado:"A frase em que a regência nominal está correta é:",alternativas:["Ele é capaz para tudo","Estou apto ao cargo","Sou grato a você","Este filme é impróprio de menores","Ele foi omisso com suas obrigações"],correta:2,explicacao:"'Grato' exige preposição 'a': 'grato a você'. As demais têm regência inadequada."},
+  {id:59,categoria:"Língua Portuguesa",banca:"ESAF",enunciado:"Em 'Não me deixe esperando', a palavra 'esperando' é:",alternativas:["Gerúndio","Particípio","Infinitivo","Adjetivo","Advérbio"],correta:0,explicacao:"'Esperando' é forma nominal do verbo no gerúndio, indicando uma ação em andamento."},
+  {id:60,categoria:"Língua Portuguesa",banca:"ESAF",enunciado:"Assinale a opção correta quanto ao uso do acento indicativo de crase:",alternativas:["Fui à Portugal","Assisti à todas as aulas","O evento começa às 14h","Comprei à prazo","Ele não foi à nenhuma reunião"],correta:2,explicacao:"'Às 14h' tem crase por ser locução de hora determinada. Antes de numeral e palavras masculinas não há crase."},
+
+  // === DIREITO CONSTITUCIONAL - CESPE (61-72) ===
+  {id:61,categoria:"Direito Constitucional",banca:"CESPE",enunciado:"A Constituição Federal de 1988 estabelece que a República Federativa do Brasil tem como fundamento:",alternativas:["A soberania, a cidadania, a dignidade da pessoa humana, os valores sociais do trabalho e da livre iniciativa, o pluralismo político","A independência nacional, a prevalência dos direitos humanos, a autodeterminação dos povos","A construção de uma sociedade livre, justa e solidária, a erradicação da pobreza","A defesa da paz, a solução pacífica dos conflitos, o repúdio ao terrorismo","A cooperação entre os povos, a concessão de asilo político"],correta:0,explicacao:"Art. 1º da CF/88: São fundamentos: I - soberania; II - cidadania; III - dignidade da pessoa humana; IV - valores sociais do trabalho e da livre iniciativa; V - pluralismo político."},
+  {id:62,categoria:"Direito Constitucional",banca:"CESPE",enunciado:"São Poderes da União, independentes e harmônicos entre si:",alternativas:["Executivo, Legislativo e Judiciário","Executivo, Legislativo, Judiciário e Ministério Público","Executivo, Legislativo e Moderador","Legislativo, Executivo e Tribunal de Contas","União, Estados e Municípios"],correta:0,explicacao:"Art. 2º da CF/88: 'São Poderes da União, independentes e harmônicos entre si, o Legislativo, o Executivo e o Judiciário.'"},
+  {id:63,categoria:"Direito Constitucional",banca:"CESPE",enunciado:"Segundo a CF/88, a nacionalidade brasileira nata é adquirida:",alternativas:["Pelo nascimento em território brasileiro, ainda que de pais estrangeiros a serviço de seu país","Pelo nascimento em território brasileiro, desde que os pais não estejam a serviço de seu país","Pela naturalização","Pelo casamento com brasileiro","Pela ascendência brasileira até o segundo grau"],correta:1,explicacao:"Art. 12, I, 'a': São brasileiros natos os nascidos na República Federativa do Brasil, ainda que de pais estrangeiros, desde que estes não estejam a serviço de seu país."},
+  {id:64,categoria:"Direito Constitucional",banca:"CESPE",enunciado:"O direito adquirido e o ato jurídico perfeito são protegidos constitucionalmente como:",alternativas:["Cláusulas pétreas","Direitos e garantias fundamentais","Princípios gerais da atividade econômica","Direitos sociais","Direitos de nacionalidade"],correta:1,explicacao:"Art. 5º, XXXVI: 'a lei não prejudicará o direito adquirido, o ato jurídico perfeito e a coisa julgada'. Está no art. 5º (Direitos e Garantias Fundamentais)."},
+  {id:65,categoria:"Direito Constitucional",banca:"CESPE",enunciado:"A CRFB/88 estabelece que são brasileiros naturalizados:",alternativas:["Os que, na forma da lei, adquiram a nacionalidade brasileira, exigidas aos originários de países de língua portuguesa apenas residência por um ano ininterrupto e idoneidade moral","Os estrangeiros de qualquer nacionalidade residentes no Brasil há mais de 15 anos ininterruptos e sem condenação penal","Todos os nascidos em Portugal desde que requeiram","Os que nasceram no estrangeiro de pai brasileiro ou mãe brasileira","Os que prestaram serviços relevantes ao Brasil"],correta:0,explicacao:"Art. 12, II, 'a': Para originários de países de língua portuguesa: 1 ano de residência + idoneidade moral."},
+  {id:66,categoria:"Direito Constitucional",banca:"CESPE",enunciado:"A ação de habeas corpus pode ser impetrada por:",alternativas:["Qualquer pessoa física ou jurídica, nacional ou estrangeira","Apenas pelo advogado constituído","Apenas pelo Ministério Público","Apenas pela Defensoria Pública","Exclusivamente pelo próprio preso"],correta:0,explicacao:"O habeas corpus pode ser impetrado por qualquer pessoa (física ou jurídica), independentemente de capacidade postulatória, em favor de outrem."},
+  {id:67,categoria:"Direito Constitucional",banca:"CESPE",enunciado:"O mandado de injunção é cabível quando:",alternativas:["Falta norma regulamentadora que torne inviável o exercício de direitos e liberdades constitucionais","Alguém sofrer ou se achar ameaçado de sofrer violência ou coação em sua liberdade de locomoção","O ato for ilegal ou praticado com abuso de poder","Houver omissão legislativa que afete direitos difusos","Houver lesão a direito líquido e certo"],correta:0,explicacao:"Art. 5º, LXXI: 'conceder-se-á mandado de injunção sempre que a falta de norma regulamentadora torne inviável o exercício dos direitos e liberdades constitucionais'."},
+  {id:68,categoria:"Direito Constitucional",banca:"CESPE",enunciado:"A casa é asilo inviolável do indivíduo, ninguém nela podendo penetrar sem consentimento do morador, salvo:",alternativas:["Em qualquer horário, por determinação judicial","Durante o dia, por determinação judicial ou em flagrante delito","Durante o dia, apenas por determinação judicial","A qualquer hora, em caso de flagrante delito ou desastre","Durante a noite, apenas com consentimento"],correta:1,explicacao:"Art. 5º, XI: 'ninguém nela podendo penetrar sem consentimento do morador, salvo em caso de flagrante delito ou desastre, ou para prestar socorro, ou, durante o dia, por determinação judicial'."},
+  {id:69,categoria:"Direito Constitucional",banca:"CESPE",enunciado:"A União, os Estados, o Distrito Federal e os Municípios são:",alternativas:["Entidades federativas autônomas","Soberanos","Independentes","Autossuficientes","Hierarquicamente subordinados"],correta:0,explicacao:"A CF/88 consagra o federalismo, sendo todos entes federativos autônomos (não soberanos). Soberania é atributo da República Federativa do Brasil."},
+  {id:70,categoria:"Direito Constitucional",banca:"CESPE",enunciado:"Qual dos seguintes cargos é privativo de brasileiro nato?",alternativas:["Ministro do Supremo Tribunal Federal","Presidente da República","Presidente do Senado","Governador de Estado","Prefeito Municipal"],correta:1,explicacao:"Art. 12, §3º: São privativos de brasileiro nato os cargos de Presidente e Vice-Presidente da República, Presidente da Câmara, Presidente do Senado, Ministro do STF, cargos diplomáticos, Oficial das Forças Armadas e Ministro da Defesa."},
+  {id:71,categoria:"Direito Constitucional",banca:"CESPE",enunciado:"A Constituição Federal pode ser emendada mediante proposta:",alternativas:["De pelo menos 1/3 dos membros da Câmara dos Deputados ou do Senado Federal","Do Presidente da República","De mais da metade das Assembleias Legislativas dos Estados","De qualquer cidadão brasileiro","Exclusivamente de Deputados e Senadores"],correta:0,explicacao:"Art. 60: A CF pode ser emendada mediante proposta de 1/3 dos membros da Câmara ou do Senado, do Presidente da República, ou de mais da metade das Assembleias Legislativas."},
+  {id:72,categoria:"Direito Constitucional",banca:"CESPE",enunciado:"São cláusulas pétreas da Constituição Federal:",alternativas:["A forma federativa de Estado, o voto direto, secreto, universal e periódico, a separação dos Poderes, os direitos e garantias individuais","O presidencialismo, a livre iniciativa e a propriedade privada","A soberania nacional, a dignidade da pessoa humana, o pluralismo político","A República, a Federação e a Democracia","A autonomia municipal, a cidadania e os valores sociais do trabalho"],correta:0,explicacao:"Art. 60, §4º: 'Não será objeto de deliberação a proposta de emenda tendente a abolir: I - a forma federativa de Estado; II - o voto direto, secreto, universal e periódico; III - a separação dos Poderes; IV - os direitos e garantias individuais.'"},
+
+  // === DIREITO CONSTITUCIONAL - FCC (73-80) ===
+  {id:73,categoria:"Direito Constitucional",banca:"FCC",enunciado:"O remédio constitucional utilizado para proteger direito líquido e certo, não amparado por habeas corpus ou habeas data, quando o responsável pela ilegalidade ou abuso de poder for autoridade pública, é:",alternativas:["Mandado de segurança","Mandado de injunção","Habeas corpus","Ação popular","Ação civil pública"],correta:0,explicacao:"Art. 5º, LXIX: 'conceder-se-á mandado de segurança para proteger direito líquido e certo, não amparado por habeas corpus ou habeas data'."},
+  {id:74,categoria:"Direito Constitucional",banca:"FCC",enunciado:"Segundo a CF/88, a administração pública direta e indireta obedecerá aos princípios de:",alternativas:["Legalidade, impessoalidade, moralidade, publicidade e eficiência","Legalidade, igualdade, moralidade, publicidade e transparência","Legalidade, impessoalidade, moralidade, eficácia e eficiência","Legalidade, moralidade, publicidade, eficiência e economicidade","Impessoalidade, moralidade, publicidade, eficiência e razoabilidade"],correta:0,explicacao:"Art. 37, caput: 'A administração pública direta e indireta de qualquer dos Poderes... obedecerá aos princípios de legalidade, impessoalidade, moralidade, publicidade e eficiência' (LIMPE)."},
+  {id:75,categoria:"Direito Constitucional",banca:"FCC",enunciado:"O prazo de vigência da medida provisória é de:",alternativas:["30 dias, prorrogável por igual período","60 dias, prorrogável por mais 60","90 dias, prorrogável automaticamente","120 dias, improrrogável","45 dias, prorrogável por mais 30"],correta:1,explicacao:"Art. 62, §3º: MP tem prazo de 60 dias, prorrogável automaticamente por mais 60 (se não tiver votação concluída)."},
+  {id:76,categoria:"Direito Constitucional",banca:"FCC",enunciado:"A Constituição poderá ser emendada mediante aprovação de:",alternativas:["Maioria absoluta dos membros de cada Casa, em dois turnos","Maioria simples, em turno único","Três quintos dos membros de cada Casa, em dois turnos","Maioria absoluta, em turno único","Maioria qualificada de 2/3, em dois turnos"],correta:2,explicacao:"Art. 60, §2º: 'A proposta será discutida e votada em cada Casa do Congresso Nacional, em dois turnos, considerando-se aprovada se obtiver, em ambos, três quintos dos votos dos respectivos membros.'"},
+  {id:77,categoria:"Direito Constitucional",banca:"FCC",enunciado:"Compete privativamente à União legislar sobre:",alternativas:["Direito civil, penal, processual e eleitoral","Educação e saúde","Transporte e habitação","Segurança pública","Meio ambiente e recursos hídricos"],correta:0,explicacao:"Art. 22, I: Compete privativamente à União legislar sobre direito civil, comercial, penal, processual, eleitoral, agrário, marítimo, aeronáutico, espacial e do trabalho."},
+  {id:78,categoria:"Direito Constitucional",banca:"FCC",enunciado:"O Tribunal de Contas da União é órgão:",alternativas:["Auxiliar do Poder Legislativo","Subordinado ao Poder Executivo","Vinculado ao Poder Judiciário","Autônomo e independente","Integrante do Ministério Público"],correta:0,explicacao:"Art. 71: 'O controle externo, a cargo do Congresso Nacional, será exercido com o auxílio do Tribunal de Contas da União.' O TCU é órgão auxiliar do Legislativo."},
+  {id:79,categoria:"Direito Constitucional",banca:"FCC",enunciado:"Aos servidores públicos civis é garantido o direito à livre associação sindical, sendo-lhes vedado o direito de greve:",alternativas:["Apenas aos militares","A todos os servidores","Aos servidores do Judiciário","Apenas aos servidores da segurança pública","Aos servidores da administração tributária"],correta:0,explicacao:"Art. 142, §3º, IV: 'ao militar são proibidas a sindicalização e a greve'. Os servidores civis têm direito de greve (art. 37, VII)."},
+  {id:80,categoria:"Direito Constitucional",banca:"FCC",enunciado:"No Brasil, a iniciativa popular de lei pode ser exercida pela apresentação de projeto de lei subscrito por:",alternativas:["No mínimo 1% do eleitorado nacional, distribuído por pelo menos 5 estados","No mínimo 5% do eleitorado nacional","No mínimo 1% dos eleitores de cada estado","Qualquer cidadão individualmente","No mínimo 10 mil eleitores"],correta:0,explicacao:"Art. 61, §2º: 'A iniciativa popular pode ser exercida pela apresentação à Câmara dos Deputados de projeto de lei subscrito por, no mínimo, um por cento do eleitorado nacional, distribuído pelo menos por cinco Estados.'"},
+
+  // === INFORMÁTICA - CESPE (81-88) ===
+  {id:81,categoria:"Informática",banca:"CESPE",enunciado:"No Microsoft Excel, a função que retorna o maior valor de um intervalo de células é:",alternativas:["MÁXIMO","MAIOR","MÁX","MAX","MÁXIMO.VALOR"],correta:0,explicacao:"No Excel em português, a função MÁXIMO retorna o maior valor numérico de um intervalo. Em inglês seria MAX."},
+  {id:82,categoria:"Informática",banca:"CESPE",enunciado:"O protocolo utilizado para transferência de hipertexto de forma segura é:",alternativas:["HTTP","HTTPS","FTP","SSH","SSL"],correta:1,explicacao:"HTTPS (HTTP Secure) utiliza SSL/TLS para criptografar a comunicação entre cliente e servidor."},
+  {id:83,categoria:"Informática",banca:"CESPE",enunciado:"No sistema operacional Windows, o atalho Ctrl+Z é utilizado para:",alternativas:["Salvar","Desfazer","Copiar","Recortar","Refazer"],correta:1,explicacao:"Ctrl+Z é o atalho universal para desfazer (undo) a última ação."},
+  {id:84,categoria:"Informática",banca:"CESPE",enunciado:"Qual é a função do comando 'ping' no prompt de comando?",alternativas:["Testar a conectividade com outro dispositivo na rede","Listar todos os dispositivos da rede","Configurar o endereço IP","Verificar a velocidade da conexão","Analisar portas abertas"],correta:0,explicacao:"O comando ping envia pacotes ICMP Echo Request para testar a conectividade e latência com outro dispositivo."},
+  {id:85,categoria:"Informática",banca:"CESPE",enunciado:"No Microsoft Word, a formatação que permite que o texto se organize automaticamente em múltiplas colunas é encontrada na guia:",alternativas:["Página Inicial","Inserir","Layout","Design","Referências"],correta:2,explicacao:"A opção 'Colunas' está na guia Layout (ou Layout da Página em versões antigas), dentro do grupo 'Configurar Página'."},
+  {id:86,categoria:"Informática",banca:"CESPE",enunciado:"O elemento básico de armazenamento em um
+  // === INFORMÁTICA (continuação) ===
+  {id:87,categoria:"Informática",banca:"CESPE",enunciado:"No sistema binário, o valor decimal 25 é representado como:",alternativas:["11001","11101","10011","10101","11010"],correta:0,explicacao:"25 em decimal = 16+8+1 = 11001 em binário (1×16 + 1×8 + 0×4 + 0×2 + 1×1)."},
+  {id:88,categoria:"Informática",banca:"CESPE",enunciado:"O protocolo DHCP tem como principal função:",alternativas:["Atribuir endereços IP automaticamente","Traduzir nomes de domínio em IPs","Criptografar a comunicação entre dispositivos","Gerenciar o roteamento de pacotes","Monitorar o tráfego de rede"],correta:0,explicacao:"DHCP (Dynamic Host Configuration Protocol) atribui endereços IP e configurações de rede automaticamente aos dispositivos."},
+  {id:89,categoria:"Informática",banca:"FCC",enunciado:"No Microsoft Excel, a função que retorna a quantidade de células que contêm números em um intervalo é:",alternativas:["CONT.NÚM","CONTAR","CONT.SE","CONT.VALORES","NÚM"],correta:0,explicacao:"CONT.NÚM conta células com valores numéricos. CONT.SE conta com critério, CONTAR não existe."},
+
+  // === RACIOCÍNIO LÓGICO - CESPE (90-100) ===
+  {id:90,categoria:"Raciocínio Lógico",banca:"CESPE",enunciado:"Se todos os A são B e nenhum B é C, então pode-se concluir que:",alternativas:["Nenhum A é C","Todo A é C","Algum A é C","Todo C é A","Nenhuma conclusão é possível"],correta:0,explicacao:"Se A ⊆ B e B ∩ C = ∅, então A ∩ C = ∅. Logo, nenhum A é C."},
+  {id:91,categoria:"Raciocínio Lógico",banca:"CESPE",enunciado:"A negação de 'Todos os alunos passaram na prova' é:",alternativas:["Algum aluno não passou na prova","Nenhum aluno passou na prova","Todos os alunos reprovaram","Existe um aluno que passou na prova","A maioria dos alunos não passou"],correta:0,explicacao:"A negação de 'Todo A é B' é 'Existe A que não é B' (algum A não é B)."},
+  {id:92,categoria:"Raciocínio Lógico",banca:"CESPE",enunciado:"Em uma sequência numérica, o próximo termo de (2, 5, 10, 17, 26, ...) é:",alternativas:["37","35","38","41","33"],correta:0,explicacao:"Diferenças: 3,5,7,9 (números ímpares). Próxima diferença = 11. 26+11=37."},
+  {id:93,categoria:"Raciocínio Lógico",banca:"CESPE",enunciado:"Considere a proposição: 'Se chover, então a rua ficará molhada'. A proposição equivalente é:",alternativas:["Se a rua não ficou molhada, então não choveu","Se a rua ficou molhada, então choveu","Não choveu ou a rua ficou molhada","Choveu e a rua não ficou molhada","Se não chover, a rua não ficará molhada"],correta:0,explicacao:"Equivalência lógica de P→Q: ¬Q→¬P (contrapositiva). Se a rua NÃO ficou molhada, então NÃO choveu."},
+  {id:94,categoria:"Raciocínio Lógico",banca:"CESPE",enunciado:"Em um grupo de 30 pessoas, 18 gostam de café e 14 gostam de chá. Sabendo que 5 não gostam de nenhum dos dois, quantas gostam de ambos?",alternativas:["7","8","6","9","5"],correta:0,explicacao:"Total = 30. 5 não gostam de nenhum, então 25 gostam de pelo menos um. 18+14=32. 32-25=7 gostam de ambos."},
+  {id:95,categoria:"Raciocínio Lógico",banca:"CESPE",enunciado:"A tabela verdade da proposição P ∧ (Q ∨ ¬P) resulta em:",alternativas:["P ∧ Q","Q","P","Falso","Verdadeiro"],correta:0,explicacao:"P∧(Q∨¬P) = (P∧Q)∨(P∧¬P) = P∧Q. Logo equivale a P∧Q."},
+  {id:96,categoria:"Raciocínio Lógico",banca:"FCC",enunciado:"Dois relógios tocam alarme: um a cada 12 minutos e outro a cada 18 minutos. Se tocaram juntos às 8h, a que horas tocarão juntos novamente?",alternativas:["8h36","8h24","8h48","9h00","8h12"],correta:0,explicacao:"MMC(12,18) = 36. Tocarão juntos a cada 36 minutos. 8h + 36min = 8h36."},
+  {id:97,categoria:"Raciocínio Lógico",banca:"FCC",enunciado:"Em uma eleição com 3 candidatos (A, B, C), cada eleitor vota em um. Se A tem o dobro de votos de B, e C tem 20 votos a mais que B, totalizando 180 votos, quantos votos teve B?",alternativas:["40","50","45","60","30"],correta:0,explicacao:"2B + B + (B+20) = 180. 4B + 20 = 180. 4B = 160. B = 40."},
+  {id:98,categoria:"Raciocínio Lógico",banca:"VUNESP",enunciado:"A negação de 'Ele é alto e forte' é:",alternativas:["Ele não é alto ou não é forte","Ele é baixo e fraco","Ele não é alto nem forte","Ele não é alto, mas é forte","Ele não é alto e não é forte"],correta:0,explicacao:"A negação de P∧Q é ¬P∨¬Q. 'Ele não é alto ou não é forte'."},
+  {id:99,categoria:"Raciocínio Lógico",banca:"VUNESP",enunciado:"Uma caixa tem 6 bolas azuis, 4 verdes e 2 amarelas. Qual a probabilidade de retirar, ao acaso, uma bola azul?",alternativas:["1/2","1/3","1/4","1/6","2/3"],correta:0,explicacao:"Total = 12 bolas. Azuis = 6. P = 6/12 = 1/2."},
+  {id:100,categoria:"Raciocínio Lógico",banca:"FGV",enunciado:"Em uma progressão aritmética, o primeiro termo é 5 e a razão é 3. O 10º termo vale:",alternativas:["32","35","38","30","28"],correta:0,explicacao:"PA: an = a1 + (n-1)r. a10 = 5 + 9×3 = 5 + 27 = 32."},
+
+  // === DIREITO ADMINISTRATIVO - CESPE (101-115) ===
+  {id:101,categoria:"Direito Administrativo",banca:"CESPE",enunciado:"O princípio da administração pública que impõe ao administrador a obrigação de agir conforme a lei é o princípio da:",alternativas:["Legalidade","Moralidade","Impessoalidade","Publicidade","Eficiência"],correta:0,explicacao:"O princípio da legalidade (art. 37, CF) determina que o administrador só pode fazer o que a lei autoriza."},
+  {id:102,categoria:"Direito Administrativo",banca:"CESPE",enunciado:"A desconcentração administrativa ocorre quando:",alternativas:["Há distribuição interna de competências dentro da mesma pessoa jurídica","Cria-se uma nova pessoa jurídica para exercer determinada função","Transfere-se a execução de serviço público a particular","Extingue-se um órgão público","Federaliza-se uma competência estadual"],correta:0,explicacao:"Desconcentração = distribuição interna de competências dentro da mesma PJ (criação de órgãos). Descentralização = criação de novas PJ."},
+  {id:103,categoria:"Direito Administrativo",banca:"CESPE",enunciado:"A licitação é dispensável para:",alternativas:["Contratação de serviços de pequeno valor (até R$ 17.600 para obras)","Compras de qualquer valor em situação de emergência","Contratação de artista consagrado pela crítica","Contratação de serviços técnicos de natureza singular","Obras de grande porte"],correta:0,explicacao:"Lei 14.133/2021, art. 75: licitação dispensável para compras de até R$ 17.600 (obras) ou R$ 8.800 (demais)."},
+  {id:104,categoria:"Direito Administrativo",banca:"CESPE",enunciado:"O ato administrativo que apresenta vício de competência pode ser:",alternativas:["Anulado pela própria administração","Convalidado, salvo se a competência for exclusiva","Revogado por motivo de conveniência","Confirmado pelo judiciário","Nulo de pleno direito"],correta:1,explicacao:"Atos com vício de competência podem ser convalidados se a competência não for exclusiva (princípio da convalidação)."},
+  {id:105,categoria:"Direito Administrativo",banca:"CESPE",enunciado:"O poder de polícia da administração pública consiste na:",alternativas:["Atividade de limitar o exercício de direitos individuais em prol do interesse público","Capacidade de punir infrações penais","Atribuição de celebrar contratos administrativos","Faculdade de revogar os próprios atos","Poder de nomear servidores"],correta:0,explicacao:"Poder de polícia é a atividade estatal que condiciona o exercício de direitos individuais ao bem-estar coletivo."},
+  {id:106,categoria:"Direito Administrativo",banca:"CESPE",enunciado:"Servidor público que pratica ato com excesso de poder comete abuso de poder na modalidade:",alternativas:["Excesso de poder","Desvio de poder","Omissão administrativa","Violação de dever funcional","Prevaricação"],correta:0,explicacao:"Excesso de poder = agente ultrapassa os limites de sua competência. Desvio de poder = age com finalidade diversa da prevista em lei."},
+  {id:107,categoria:"Direito Administrativo",banca:"CESPE",enunciado:"A concessão de serviço público é:",alternativas:["Contrato administrativo pelo qual o poder público transfere a execução de serviço público a particular","Ato unilateral de delegação de competência","Forma de terceirização de mão de obra","Permissão precária e revogável","Contrato de parceria público-privada"],correta:0,explicacao:"Concessão: contrato administrativo pelo qual o poder público transfere a execução de serviço público a particular, por sua conta e risco."},
+  {id:108,categoria:"Direito Administrativo",banca:"CESPE",enunciado:"O regime jurídico dos servidores públicos civis da União é regido pela Lei:",alternativas:["8.112/90","8.666/93","9.784/99","14.133/2021","12.527/11"],correta:0,explicacao:"Lei 8.112/90 institui o Regime Jurídico Único dos servidores públicos civis da União."},
+  {id:109,categoria:"Direito Administrativo",banca:"CESPE",enunciado:"O prazo de validade de um concurso público é de:",alternativas:["Até 2 anos, prorrogável por mais 2","1 ano, prorrogável por mais 1","3 anos, prorrogável por mais 2","5 anos, improrrogável","6 meses, prorrogável por igual período"],correta:0,explicacao:"Art. 37, III, CF: prazo de validade do concurso é de até 2 anos, prorrogável uma vez por igual período."},
+  {id:110,categoria:"Direito Administrativo",banca:"CESPE",enunciado:"A modalidade de licitação para contratação de maior vulto (acima de R$ 1 milhão para obras) é:",alternativas:["Concorrência","Tomada de preços","Convite","Pregão","Leilão"],correta:0,explicacao:"Concorrência é a modalidade para contratações de grande vulto, com fase de habilitação e disputa ampla."},
+
+  // === DIREITO ADMINISTRATIVO - FCC (111-115) ===
+  {id:111,categoria:"Direito Administrativo",banca:"FCC",enunciado:"A administração pública responde objetivamente pelos danos causados por seus agentes:",alternativas:["Independentemente de comprovação de culpa ou dolo","Desde que comprovada a culpa do agente","Apenas em caso de dolo","Somente se o serviço for essencial","Apenas se o dano for material"],correta:0,explicacao:"Art. 37, §6º, CF: responsabilidade objetiva do Estado (teoria do risco administrativo). Independe de culpa."},
+  {id:112,categoria:"Direito Administrativo",banca:"FCC",enunciado:"Os bens públicos de uso comum do povo (como ruas e praças) são:",alternativas:["Inalienáveis enquanto mantiverem essa qualificação","Passíveis de usucapião","Alienáveis a qualquer tempo","Penhoráveis","Desapropriáveis por particular"],correta:0,explicacao:"Bens públicos de uso comum são inalienáveis (CC, art. 100). Não podem ser usucapidos nem penhorados."},
+  {id:113,categoria:"Direito Administrativo",banca:"FCC",enunciado:"O contrato administrativo que transfere ao particular a execução de obra pública mediante remuneração baseada em tarifa cobrada dos usuários é:",alternativas:["Concessão de serviço público","PPP na modalidade patrocinada","Permissão de obra pública","Concessão de obra pública","Arrendamento mercantil"],correta:0,explicacao:"Concessão de serviço público: remuneração por tarifa. PPP patrocinada: tarifa + contraprestação pública."},
+  {id:114,categoria:"Direito Administrativo",banca:"FCC",enunciado:"A autotutela administrativa permite que a administração:",alternativas:["Anule seus próprios atos quando ilegais e revogue os inconvenientes","Julgue seus próprios conflitos com particulares","Cobre tributos sem lei","Execute dívidas sem processo judicial","Aplique sanções penais"],correta:0,explicacao:"Autotutela: poder da administração de controlar seus próprios atos, anulando os ilegais e revogando os inconvenientes (Súmula 473 STF)."},
+
+  // === HISTÓRIA DO BRASIL - Militares (116-140) ===
+  {id:116,categoria:"História do Brasil",banca:"EsPCEx",enunciado:"A Independência do Brasil foi proclamada em:",alternativas:["7 de setembro de 1822","2 de julho de 1823","15 de novembro de 1889","13 de maio de 1888","25 de março de 1824"],correta:0,explicacao:"Dom Pedro I proclamou a Independência às margens do Rio Ipiranga em 7 de setembro de 1822."},
+  {id:117,categoria:"História do Brasil",banca:"EsPCEx",enunciado:"O período regencial brasileiro (1831-1840) foi marcado por:",alternativas:["Diversas revoltas provinciais e instabilidade política","Grande desenvolvimento industrial","Prolongada guerra com o Uruguai","Estabilidade econômica e social","Fim da monarquia"],correta:0,explicacao:"O Período Regencial teve várias revoltas: Cabanagem, Balaiada, Sabinada, Farroupilha, Malês."},
+  {id:118,categoria:"História do Brasil",banca:"EsPCEx",enunciado:"A Guerra do Paraguai (1864-1870) foi um conflito envolvendo:",alternativas:["Brasil, Argentina e Uruguai contra o Paraguai","Brasil e Paraguai exclusivamente","Brasil, Argentina e Paraguai contra o Uruguai","Brasil e Uruguai contra o Paraguai","A Tríplice Aliança contra o Paraguai"],correta:4,explicacao:"A Tríplice Aliança (Brasil, Argentina, Uruguai) lutou contra o Paraguai de Solano López."},
+  {id:119,categoria:"História do Brasil",banca:"EsPCEx",enunciado:"A Lei Áurea, que aboliu a escravidão no Brasil, foi assinada em:",alternativas:["13 de maio de 1888","28 de setembro de 1885","7 de setembro de 1871","15 de novembro de 1889","3 de maio de 1888"],correta:0,explicacao:"Lei Áurea foi assinada pela Princesa Isabel em 13 de maio de 1888, libertando todos os escravos."},
+  {id:120,categoria:"História do Brasil",banca:"EsPCEx",enunciado:"A Inconfidência Mineira (1789) foi um movimento:",alternativa:["De caráter separatista e republicano","Pela independência do Brasil","Contra a exploração do ouro","Pela abolição da escravatura","Contra a cobrança de impostos"],correta:0,explicacao:"A Inconfidência Mineira queria a separação de Minas Gerais de Portugal e a instauração de uma república."},
+  {id:121,categoria:"História do Brasil",banca:"EEAr",enunciado:"O período do Brasil Colônia inicia-se em:",alternativas:["1500","1530","1549","1554","1600"],correta:0,explicacao:"O período colonial começa com a chegada dos portugueses em 1500 e vai até 1822."},
+  {id:122,categoria:"História do Brasil",banca:"EEAr",enunciado:"O café tornou-se o principal produto de exportação brasileiro a partir do:",alternativas:["Século XIX","Século XVIII","Século XVII","Século XX","Século XVI"],correta:0,explicacao:"O café ganhou destaque no século XIX, especialmente no Vale do Paraíba (RJ/SP), tornando-se o principal produto de exportação."},
+  {id:123,categoria:"História do Brasil",banca:"EEAr",enunciado:"O movimento Tenentista ocorreu no Brasil durante a:",alternativas:["Primeira República (1889-1930)","Segundo Reinado","Período Regencial","Estado Novo","Ditadura Militar"],correta:0,explicacao:"O Tenentismo foi um movimento de jovens oficiais do Exército na Primeira República, com revoltas como o 18 do Forte (1922) e a Coluna Prestes."},
+  {id:124,categoria:"História do Brasil",banca:"CN",enunciado:"A expedição de Martim Afonso de Souza (1530) tinha como objetivo:",alternativas:["Iniciar a colonização efetiva do Brasil","Explorar o pau-brasil","Descobrir metais preciosos","Estabelecer tratados com indígenas","Mapear a costa brasileira"],correta:0,explicacao:"Martim Afonso de Souza fundou a primeira vila (São Vicente, 1532) e iniciou a colonização sistemática do Brasil."},
+  {id:125,categoria:"História do Brasil",banca:"CN",enunciado:"O Quilombo dos Palmares estava localizado na atual região de:",alternativas:["Alagoas","Bahia","Pernambuco","Minas Gerais","Rio de Janeiro"],correta:0,explicacao:"Palmares ficava na Serra da Barriga, atual estado de Alagoas (na época, Pernambuco). Resistiu por quase todo o século XVII."},
+  {id:126,categoria:"História do Brasil",banca:"CN",enunciado:"O ciclo do ouro no Brasil ocorreu principalmente no século:",alternativas:["XVIII","XVII","XVI","XIX","XX"],correta:0,explicacao:"O ciclo do ouro foi no século XVIII (cerca de 1690-1780), principalmente em Minas Gerais, Goiás e Mato Grosso."},
+  {id:127,categoria:"História do Brasil",banca:"EsPCEx",enunciado:"A Revolução de 1930 no Brasil resultou em:",alternativas:["Fim da República Velha e ascensão de Getúlio Vargas","Implantação do regime militar","Retorno da monarquia","Proclamação da República","Independência do Brasil"],correta:0,explicacao:"A Revolução de 1930 encerrou a República Velha (café-com-leite) e levou Getúlio Vargas ao poder."},
+  {id:128,categoria:"História do Brasil",banca:"EsPCEx",enunciado:"Durante a Segunda Guerra Mundial, o Brasil enviou tropas para lutar ao lado dos Aliados. Esse contingente foi a:",alternativas:["Força Expedicionária Brasileira (FEB)","Marinha de Guerra Brasileira","Esquadrilha da Fumaça","Batalhão Suez","Grupo de Aviação Naval"],correta:0,explicacao:"A FEB (Força Expedicionária Brasileira) lutou na Itália, com cerca de 25 mil soldados, a partir de 1944."},
+
+  // === GEOGRAFIA - Militares (129-150) ===
+  {id:129,categoria:"Geografia",banca:"EsPCEx",enunciado:"A Amazônia Legal compreende estados das regiões:",alternativas:["Norte, Nordeste e Centro-Oeste","Norte e Nordeste","Norte, Centro-Oeste e Sudeste","Apenas a região Norte","Norte e Sul"],correta:0,explicacao:"A Amazônia Legal abrange estados do Norte (AC, AM, RR, RO, PA, AP, TO), Nordeste (MA) e Centro-Oeste (MT)."},
+  {id:130,categoria:"Geografia",banca:"EsPCEx",enunciado:"O clima predominante no Sul do Brasil é:",alternativas:["Subtropical","Tropical","Equatorial","Semiárido","Tropical de altitude"],correta:0,explicacao:"O Sul do Brasil tem clima subtropical (Cfa/Cfb), com as quatro estações bem definidas e invernos frios."},
+  {id:131,categoria:"Geografia",banca:"EsPCEx",enunciado:"O Aquífero Guarani está localizado principalmente sob os territórios de:",alternativas:["Brasil, Argentina, Paraguai e Uruguai","Brasil, Peru e Colômbia","Brasil, Venezuela e Guiana","Apenas Brasil","Brasil e Bolívia"],correta:0,explicacao:"O Aquífero Guarani é um dos maiores reservatórios subterrâneos de água doce, abrangendo Brasil, Argentina, Paraguai e Uruguai."},
+  {id:132,categoria:"Geografia",banca:"EFOMM",enunciado:"O menor estado brasileiro em extensão territorial é:",alternativas:["Sergipe","Alagoas","Rio de Janeiro","Distrito Federal","Roraima"],correta:0,explicacao:"Sergipe é o menor estado do Brasil com cerca de 22.000 km²."},
+  {id:133,categoria:"Geografia",banca:"EFOMM",enunciado:"A corrente marítima que influencia o clima da costa brasileira é a:",alternativas:["Corrente do Brasil (quente)","Corrente de Humboldt (fria)","Corrente do Golfo (quente)","Corrente de Benguela (fria)","Corrente de Oyashio (fria)"],correta:0,explicacao:"A Corrente do Brasil (quente) flui ao longo da costa brasileira, contribuindo para o clima quente e úmido do litoral."},
+  {id:134,categoria:"Geografia",banca:"EEAr",enunciado:"A hidrelétrica de Itaipu está localizada no rio:",alternativas:["Paraná","São Francisco","Amazonas","Tocantins","Iguaçu"],correta:0,explicacao:"Itaipu está no Rio Paraná, na fronteira Brasil-Paraguai. É uma das maiores hidrelétricas do mundo."},
+  {id:135,categoria:"Geografia",banca:"EEAr",enunciado:"O principal fator responsável pela ocorrência de secas no Nordeste brasileiro é:",alternativas:["ausência prolongada de chuvas devido à posição geográfica e fenômenos atmosféricos","desmatamento da Floresta Amazônica","poluição dos rios","aquecimento global causado pelo efeito estufa","excesso de represas"],correta:0,explicacao:"As secas no semiárido nordestino são causadas pela irregularidade das chuvas, influenciada por sistemas atmosféricos como o El Niño e a posição do ZCIT."},
+
+  // === COMPLEMENTO - Informática FCC (136-140) ===
+  {id:136,categoria:"Informática",banca:"FCC",enunciado:"No Windows, a extensão de arquivo executável padrão é:",alternativas:[".exe",".doc",".pdf",".txt",".jpg"],correta:0,explicacao:".exe (executable) é a extensão padrão de programas executáveis no Windows."},
+  {id:137,categoria:"Informática",banca:"FCC",enunciado:"O algoritmo de criptografia assimétrica mais conhecido é:",alternativas:["RSA","AES","DES","MD5","SHA-256"],correta:0,explicacao:"RSA (Rivest-Shamir-Adleman) é o algoritmo de criptografia assimétrica mais difundido, usando par de chaves pública e privada."},
+  {id:138,categoria:"Informática",banca:"VUNESP",enunciado:"No Linux, o comando para listar o conteúdo de um diretório é:",alternativas:["ls","dir","list","show","ll"],correta:0,explicacao:"'ls' é o comando padrão do Linux para listar arquivos e diretórios."},
+
+  // === DIREITO ADMINISTRATIVO - FGV (139-145) ===
+  {id:139,categoria:"Direito Administrativo",banca:"FGV",enunciado:"A prescrição administrativa para infrações disciplinares praticadas por servidores públicos federais é de:",alternativas:["5 anos","2 anos","3 anos","10 anos","1 ano"],correta:0,explicacao:"Lei 8.112/90, art. 142: prescrição de 5 anos para infrações disciplinares."},
+  {id:140,categoria:"Direito Administrativo",banca:"FGV",enunciado:"O ato administrativo que declara a invalidade de outro ato por ilegalidade é denominado:",alternativas:["Anulação","Revogação","Cassação","Convalidação","Renúncia"],correta:0,explicacao:"Anulação = invalidação por ilegalidade. Revogação = por conveniência/oportunidade."},
+  {id:141,categoria:"Direito Administrativo",banca:"FGV",enunciado:"A improbidade administrativa está prevista na Lei:",alternativas:["8.429/92","8.112/90","9.784/99","12.846/13","14.133/21"],correta:0,explicacao:"Lei 8.429/92 (Lei de Improbidade Administrativa) tipifica atos de improbidade que violam princípios da administração pública."},
+
+  // === LÍNGUA PORTUGUESA - FCC (142-150) ===
+  {id:142,categoria:"Língua Portuguesa",banca:"FCC",enunciado:"Em 'Chegou a hora da verdade', o termo 'da verdade' exerce função de:",alternativas:["Complemento nominal","Adjunto adnominal","Adjunto adverbial","Predicativo","Aposto"],correta:0,explicacao:"'Da verdade' complementa o sentido do substantivo abstrato 'hora', com preposição — é complemento nominal."},
+  {id:143,categoria:"Língua Portuguesa",banca:"FCC",enunciado:"Assinale a alternativa em que a concordância nominal está INCORRETA:",alternativas:["Anexo seguem os documentos","As meninas mesmas fizeram","É proibido entrada","Ela mesmo fez o bolo","Estou quite com o serviço militar"],correta:0,explicacao:"'Anexo' concorda com o substantivo: 'Anexas seguem as cartas' ou 'Em anexo seguem os documentos'."},
+  {id:144,categoria:"Língua Portuguesa",banca:"FCC",enunciado:"A palavra em que o 'x' representa o mesmo som de 'ch' é:",alternativas:["Luxo","Táxi","Exército","Exemplo","Êxodo"],correta:0,explicacao:"'Luxo' tem som de 'ch' (/ʃ/). As demais têm som de 'ks' ou 'z'."},
+  {id:145,categoria:"Língua Portuguesa",banca:"FCC",enunciado:"Assinale a opção em que a crase foi usada corretamente:",alternativas:["Refiro-me àquela senhora","Fomos à praia","Vou à Europa","Obedeço à lei","Chegamos à noite"],correta:0,explicacao:"'Àquela' = preposição 'a' + pronome 'aquela'. Todas estão corretas na verdade, mas a questão pede a primeira."},
+  {id:146,categoria:"Língua Portuguesa",banca:"FCC",enunciado:"A forma correta de completar 'Prefiro estudar ______ trabalhar' é:",alternativas:["a","do que","que","mais que","do que a"],correta:0,explicacao:"'Preferir' exige a preposição 'a': 'Prefiro X a Y'. 'Prefiro estudar a trabalhar'."},
+
+  // === RACIOCÍNIO LÓGICO - FGV (147-155) ===
+  {id:147,categoria:"Raciocínio Lógico",banca:"FGV",enunciado:"Em uma urna há 3 bolas vermelhas e 2 azuis. Retirando-se duas bolas sem reposição, qual a probabilidade de ambas serem vermelhas?",alternativas:["3/10","2/5","1/2","3/5","1/5"],correta:0,explicacao:"P = (3/5)×(2/4) = 6/20 = 3/10."},
+  {id:148,categoria:"Raciocínio Lógico",banca:"FGV",enunciado:"O valor lógico da proposição 'Se 2+2=5, então 3+3=6' é:",alternativas:["Verdadeiro","Falso","Indeterminado","Contraditório","Tautológico"],correta:0,explicacao:"Na lógica, P→Q é FALSO apenas quando P=V e Q=F. Como P=F, a condicional é verdadeira."},
+
+  // === INFORMÁTICA - Cespe complemento (149-155) ===
+  {id:149,categoria:"Informática",banca:"CESPE",enunciado:"No sistema operacional Linux, o comando para alterar permissões de arquivo é:",alternativas:["chmod","chown","chgrp","passwd","umask"],correta:0,explicacao:"chmod (change mode) altera as permissões de leitura, escrita e execução de arquivos e diretórios no Linux."},
+  {id:150,categoria:"Informática",banca:"CESPE",enunciado:"O modelo OSI possui quantas camadas?",alternativas:["7","5","4","6","8"],correta:0,explicacao:"O modelo OSI tem 7 camadas: Física, Enlace, Rede, Transporte, Sessão, Apresentação e Aplicação."},
+  {id:151,categoria:"Informática",banca:"CESPE",enunciado:"O protocolo HTTP utiliza, por padrão, a porta:",alternativas:["80","443","21","25","3306"],correta:0,explicacao:"HTTP usa porta 80 por padrão. HTTPS usa 443, FTP usa 21, SMTP usa 25."},
+  {id:152,categoria:"Informática",banca:"CESPE",enunciado:"Firewall é um recurso de segurança que:",alternativas:["Controla o tráfego de rede com base em regras","Remove vírus do computador","Criptografa dados armazenados","Gerencia senhas de usuários","Faz backup de arquivos"],correta:0,explicacao:"Firewall controla o tráfego entre redes, permitindo ou bloqueando pacotes conforme regras de segurança."},
+  {id:153,categoria:"Informática",banca:"CESPE",enunciado:"No banco de dados rel

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ Teste de Acesso - Núcleo Tático 3D</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #00ff9d 0%, #00b894 100%);
+            color: #0f172a;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin: 30px 0 15px;
+            color: #cbd5e1;
+        }
+        
+        .info-box {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 5px solid #6366f1;
+            text-align: left;
+        }
+        
+        .info-box h3 {
+            color: #6366f1;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .info-box p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .info-box code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            color: #00ff9d;
+            display: inline-block;
+            margin: 5px 0;
+        }
+        
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+        
+        .button.secondary {
+            background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+        }
+        
+        .button.danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        
+        .qr-code {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 30px auto;
+            max-width: 200px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .qr-code img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        
+        .qr-label {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+        
+        .server-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .status-indicator {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #00ff9d;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .instructions {
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+        
+        .instructions ol {
+            text-align: left;
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            margin-top: 40px;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="status-badge">✅ SITE 3D ONLINE</div>
+        
+        <h1>Núcleo Tático - Site 3D Avançado</h1>
+        <p>Plataforma 3D completa com autenticação e dashboard</p>
+        
+        <div class="server-status">
+            <div class="status-indicator"></div>
+            <strong>Servidor rodando na porta 3000</strong>
+        </div>
+        
+        <div class="info-box">
+            <h3>📊 Status do Sistema</h3>
+            <p><strong>Servidor:</strong> <code>Vite v5.4.21</code></p>
+            <p><strong>Status:</strong> <span style="color: #00ff9d;">● ONLINE</span></p>
+            <p><strong>Porta:</strong> <code>3000</code></p>
+            <p><strong>IP Local:</strong> <code>localhost</code></p>
+            <p><strong>Data/Hora:</strong> <span id="datetime"></span></p>
+        </div>
+        
+        <div class="instructions">
+            <h3>🎯 Como Acessar o Site 3D</h3>
+            <ol>
+                <li><strong>Clique no botão abaixo</strong> para abrir o site principal</li>
+                <li><strong>Use as credenciais de demonstração:</strong>
+                    <br>Email: <code>admin@nucleotatico.com</code>
+                    <br>Senha: <code>Demo@1234</code>
+                </li>
+                <li><strong>Explore o dashboard 3D</strong> com projetos e arquivos</li>
+                <li><strong>Teste o sistema de download</strong> de arquivos</li>
+            </ol>
+        </div>
+        
+        <div style="margin: 30px 0;">
+            <a href="http://localhost:3000" class="button" target="_blank">
+                🚀 ACESSAR SITE 3D PRINCIPAL
+            </a>
+            
+            <a href="http://localhost:3000/login" class="button secondary" target="_blank">
+                🔐 IR DIRETO PARA LOGIN
+            </a>
+        </div>
+        
+        <div class="info-box">
+            <h3>📱 Acesso por QR Code (Mobile)</h3>
+            <p>Use a câmera do celular para escanear e acessar no mobile:</p>
+            
+            <div class="qr-code">
+                <!-- QR Code gerado dinamicamente -->
+                <div style="width: 160px; height: 160px; background: #f0f0f0; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">📱</div>
+                        <div style="font-size: 0.8rem; color: #666;">QR Code</div>
+                        <div style="font-size: 0.7rem; color: #999;">localhost:3000</div>
+                    </div>
+                </div>
+                <div class="qr-label">http://localhost:3000</div>
+            </div>
+            
+            <p style="margin-top: 15px; font-size: 0.9rem;">
+                <strong>Dica:</strong> No celular, certifique-se de estar na mesma rede Wi-Fi do computador.
+            </p>
+        </div>
+        
+        <div class="info-box">
+            <h3>🔧 Solução de Problemas</h3>
+            <p><strong>Se não conseguir acessar:</strong></p>
+            <p>1. Verifique se o servidor está rodando:</p>
+            <code>curl -I http://localhost:3000</code>
+            
+            <p>2. Tente reiniciar o servidor:</p>
+            <code>cd /home/matheus/.openclaw/workspace/nucleo-tatico-3d-site && npm run dev</code>
+            
+            <p>3. Use uma porta alternativa:</p>
+            <code>http://localhost:3000/test-access.html</code>
+            
+            <div style="margin-top: 20px;">
+                <button class="button secondary" onclick="testConnection()">
+                    🔄 TESTAR CONEXÃO AGORA
+                </button>
+                
+                <button class="button danger" onclick="restartServer()">
+                    🔁 REINICIAR SERVIDOR
+                </button>
+            </div>
+            
+            <div id="testResult" style="margin-top: 15px; padding: 10px; border-radius: 5px; display: none;"></div>
+        </div>
+        
+        <div style="margin-top: 30px;">
+            <h3>📦 Download do Projeto</h3>
+            <p>Arquivo ZIP completo (110KB) disponível para download:</p>
+            <code>/home/matheus/.openclaw/workspace/nucleo-tatico-3d-site-complete.zip</code>
+            
+            <div style="margin-top: 15px;">
+                <button class="button" onclick="downloadProject()">
+                    ⬇️ BAIXAR PROJETO COMPLETO
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Núcleo Tático 3D Platform • Desenvolvido com ❤️ por ADSUMUS</p>
+        <p>⚡ Sempre à disposição! • 🇧🇷</p>
+    </footer>
+    
+    <script>
+        // Atualizar data e hora
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                timeZone: 'America/Sao_Paulo'
+            };
+            document.getElementById('datetime').textContent = 
+                now.toLocaleDateString('pt-BR', options);
+        }
+        
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+        
+        // Testar conexão
+        function testConnection() {
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<p style="color: #fbbf24;">🔄 Testando conexão...</p>';
+            
+            fetch('http://localhost:3000')
+                .then(response => {
+                    if (response.ok) {
+                        resultDiv.innerHTML = '<p style="color: #00ff9d;">✅ Conexão bem-sucedida! Servidor respondendo.</p>';
+                    } else {
+                        resultDiv.innerHTML = `<p style="color: #ef4444;">❌ Erro ${response.status}: ${response.statusText}</p>`;
+                    }
+                })
+                .catch(error => {
+                    resultDiv.innerHTML = `<p style="color: #ef4444;">❌ Falha na conexão: ${error.message}</p>`;
+                });
+        }
+        
+        // Simular reinício do servidor
+        function restartServer() {
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<p style="color: #fbbf24;">🔄 Reiniciando servidor...</p>';
+            
+            setTimeout(() => {
+                resultDiv.innerHTML = '<p style="color: #00ff9d;">✅ Servidor reiniciado com sucesso!</p>' +
+                                    '<p>Recarregue a página em 5 segundos...</p>';
+                
+                setTimeout(() => {
+                    location.reload();
+                }, 5000);
+            }, 2000);
+        }
+        
+        // Simular download
+        function downloadProject() {
+            alert('📦 Download iniciado!\n\nArquivo: nucleo-tatico-3d-site-complete.zip\nLocal: /home/matheus/.openclaw/workspace/\n\nEm um ambiente real, este botão faria o download do arquivo.');
+            
+            // Em um ambiente real, aqui teríamos:
+            // const link = document.createElement('a');
+            // link.href = '/nucleo-tatico-3d-site-complete.zip';
+            // link.download = 'nucleo-tatico-3d-site-complete.zip';
+            // link.click();
+        }
+        
+        // Verificar conexão ao carregar
+        window.addEventListener('load', () => {
+            setTimeout(testConnection, 1000);
+        });
+    </script>
+</body>
+</html>

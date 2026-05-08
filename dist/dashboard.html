@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Núcleo Tático — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:100%;-webkit-text-size-adjust:100%}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:#0a0a0f;
+  color:#e2e2e8;
+  min-height:100vh;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#0a0a0f}
+::-webkit-scrollbar-thumb{background:#1e1e2e;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#2e2e3e}
+
+/* ===== LAYOUT ===== */
+.wrapper{max-width:1120px;margin:0 auto;padding:0 20px}
+
+/* ===== GLASS NAVBAR ===== */
+.navbar{
+  position:sticky;top:0;z-index:100;
+  backdrop-filter:blur(20px) saturate(1.4);
+  -webkit-backdrop-filter:blur(20px) saturate(1.4);
+  background:rgba(10,10,15,.72);
+  border-bottom:1px solid rgba(30,30,46,.6);
+  padding:0 20px;
+}
+.navbar-inner{
+  max-width:1120px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  height:64px;
+}
+.navbar-logo{
+  display:flex;align-items:center;gap:10px;
+  font-weight:700;font-size:1.15rem;
+  color:#fff;text-decoration:none;
+  white-space:nowrap;
+}
+.navbar-logo .logo-icon{
+  width:32px;height:32px;
+  background:linear-gradient(135deg,#6366f1,#8b5cf6);
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:800;color:#fff;
+  flex-shrink:0;
+}
+.navbar-logo span{background:linear-gradient(135deg,#e2e2e8,#a5a5b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{
+  color:#78788a;text-decoration:none;
+  font-size:.875rem;font-weight:500;
+  padding:8px 16px;border-radius:6px;
+  transition:all .2s;
+}
+.nav-links a:hover{color:#e2e2e8;background:rgba(99,102,241,.08)}
+.nav-links a.active{color:#6366f1;background:rgba(99,102,241,.12)}
+.btn-logout{
+  background:transparent;border:1px solid #1e1e2e;
+  color:#78788a;cursor:pointer;
+  font-family:inherit;font-size:.825rem;font-weight:500;
+  padding:8px 16px;border-radius:6px;
+  transition:all .2s;white-space:nowrap;
+}
+.btn-logout:hover{border-color:#ef4444;color:#ef4444;background:rgba(239,68,68,.08)}
+.nav-right{display:flex;align-items:center;gap:12px}
+
+/* ===== HAMBURGER (mobile) ===== */
+.hamburger{display:none;background:none;border:none;color:#e2e2e8;font-size:1.5rem;cursor:pointer;padding:4px}
+@media(max-width:768px){
+  .nav-links{display:none;position:absolute;top:64px;left:0;right:0;background:rgba(10,10,15,.96);backdrop-filter:blur(20px);flex-direction:column;padding:12px 20px 20px;border-bottom:1px solid #1e1e2e;gap:2px}
+  .nav-links.open{display:flex}
+  .nav-links a{width:100%;padding:12px 16px}
+  .hamburger{display:block}
+  .btn-logout{padding:8px 12px;font-size:.78rem}
+}
+
+/* ===== WELCOME HEADER ===== */
+.welcome-section{margin-top:48px;margin-bottom:36px}
+.welcome-card{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:24px;flex-wrap:wrap;
+}
+.welcome-left{display:flex;align-items:center;gap:20px}
+.avatar{
+  width:56px;height:56px;border-radius:50%;
+  background:linear-gradient(135deg,#6366f1,#8b5cf6);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:1.4rem;color:#fff;
+  flex-shrink:0;box-shadow:0 0 0 2px rgba(99,102,241,.25),0 8px 32px rgba(99,102,241,.15);
+}
+.welcome-text h1{font-size:1.6rem;font-weight:700;color:#fff;line-height:1.3}
+.welcome-text p{color:#78788a;font-size:.9rem;margin-top:2px}
+.welcome-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);
+  padding:8px 16px;border-radius:100px;
+  font-size:.8rem;color:#818cf8;font-weight:500;
+}
+@media(max-width:600px){
+  .welcome-card{flex-direction:column;align-items:flex-start}
+  .welcome-text h1{font-size:1.3rem}
+}
+
+/* ===== STATS ROW ===== */
+.stats-row{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:36px;
+}
+.stat-card{
+  background:#12121a;
+  border:1px solid #1e1e2e;
+  border-radius:12px;
+  padding:20px;
+  transition:border-color .2s,transform .2s;
+}
+.stat-card:hover{border-color:#6366f1;transform:translateY(-2px)}
+.stat-card .stat-label{
+  font-size:.75rem;font-weight:500;color:#78788a;
+  text-transform:uppercase;letter-spacing:.05em;
+  margin-bottom:6px;
+}
+.stat-card .stat-value{
+  font-family:'JetBrains Mono',monospace;
+  font-size:1.75rem;font-weight:700;
+  color:#fff;
+  line-height:1.2;
+}
+.stat-card .stat-sub{
+  font-size:.75rem;color:#52525b;
+  margin-top:4px;
+}
+.stat-card.accent .stat-value{color:#818cf8}
+.stat-card.green .stat-value{color:#34d399}
+.stat-card.orange .stat-value{color:#fb923c}
+.stat-card.purple .stat-value{color:#a78bfa}
+@media(max-width:900px){.stats-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.stats-row{grid-template-columns:1fr 1fr}.stat-card{padding:16px}.stat-card .stat-value{font-size:1.35rem}}
+
+/* ===== GRID SECTIONS ===== */
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:1fr 340px;
+  gap:24px;
+  margin-bottom:48px;
+}
+@media(max-width:900px){.dashboard-grid{grid-template-columns:1fr}}
+
+.card{
+  background:#12121a;
+  border:1px solid #1e1e2e;
+  border-radius:12px;
+  padding:24px;
+}
+.card-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:20px;
+}
+.card-header h2{
+  font-size:.95rem;font-weight:600;color:#e2e2e8;
+}
+.card-header .card-count{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.75rem;color:#78788a;
+  background:rgba(30,30,46,.6);padding:4px 10px;border-radius:100px;
+}
+
+/* ===== CATEGORY PROGRESS BARS ===== */
+.category-item{margin-bottom:16px}
+.category-item:last-child{margin-bottom:0}
+.category-top{
+  display:flex;justify-content:space-between;
+  margin-bottom:6px;
+}
+.category-name{font-size:.825rem;font-weight:500;color:#c4c4cf}
+.category-fraction{font-family:'JetBrains Mono',monospace;font-size:.775rem;color:#78788a}
+.bar-track{
+  width:100%;height:6px;
+  background:#1e1e2e;border-radius:100px;
+  overflow:hidden;
+}
+.bar-fill{
+  height:100%;border-radius:100px;
+  background:linear-gradient(90deg,#6366f1,#818cf8);
+  transition:width .8s ease;
+}
+.bar-fill.green{background:linear-gradient(90deg,#34d399,#6ee7b7)}
+.bar-fill.yellow{background:linear-gradient(90deg,#fbbf24,#fcd34d)}
+.bar-fill.orange{background:linear-gradient(90deg,#fb923c,#fdba74)}
+.bar-fill.red{background:linear-gradient(90deg,#ef4444,#f87171)}
+
+/* ===== RECENT ACTIVITY ===== */
+.activity-list{list-style:none}
+.activity-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 0;
+  border-bottom:1px solid rgba(30,30,46,.5);
+  gap:12px;
+}
+.activity-item:last-child{border-bottom:none}
+.activity-left{display:flex;align-items:center;gap:10px;min-width:0}
+.activity-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+}
+.activity-dot.hit{background:#34d399;box-shadow:0 0 6px rgba(52,211,153,.4)}
+.activity-dot.miss{background:#ef4444;box-shadow:0 0 6px rgba(239,68,68,.4)}
+.activity-question{
+  font-size:.825rem;color:#c4c4cf;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.activity-date{
+  font-size:.7rem;color:#52525b;
+  font-family:'JetBrains Mono',monospace;white-space:nowrap;
+}
+.activity-empty{
+  text-align:center;padding:32px 0;
+  color:#52525b;font-size:.875rem;
+}
+.activity-empty-icon{font-size:2rem;margin-bottom:8px;opacity:.4}
+
+/* ===== QUICK ACTIONS ===== */
+.quick-actions{display:flex;flex-direction:column;gap:12px;margin-top:4px}
+.btn-action{
+  display:flex;align-items:center;gap:12px;
+  background:rgba(30,30,46,.5);
+  border:1px solid #1e1e2e;
+  border-radius:10px;
+  padding:16px 20px;
+  color:#e2e2e8;text-decoration:none;
+  font-size:.875rem;font-weight:500;
+  transition:all .2s;
+  cursor:pointer;
+}
+.btn-action:hover{border-color:#6366f1;background:rgba(99,102,241,.08);transform:translateX(4px)}
+.btn-action .action-icon{
+  width:36px;height:36px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;flex-shrink:0;
+}
+.btn-action .action-icon.primary{background:rgba(99,102,241,.15);color:#818cf8}
+.btn-action .action-icon.secondary{background:rgba(52,211,153,.12);color:#34d399}
+.btn-action .action-text{display:flex;flex-direction:column}
+.btn-action .action-text small{font-size:.72rem;color:#52525b;font-weight:400;margin-top:1px}
+
+/* ===== LAST SIMULADO ===== */
+.last-simulado{margin-top:20px;padding:16px;background:rgba(30,30,46,.3);border-radius:10px;border:1px solid rgba(30,30,46,.5)}
+.last-simulado h3{font-size:.8rem;font-weight:600;color:#78788a;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+.simulado-score-row{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.simulado-score{font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:700;color:#e2e2e8}
+.simulado-score.good{color:#34d399}
+.simulado-score.ok{color:#fbbf24}
+.simulado-score.bad{color:#ef4444}
+.simulado-details{font-size:.775rem;color:#78788a;font-family:'JetBrains Mono',monospace}
+.simulado-empty{text-align:center;padding:20px 0;color:#52525b;font-size:.825rem}
+
+/* ===== RESPONSIVE SIDEBAR ORDER ===== */
+@media(max-width:900px){
+  .dashboard-grid .card:first-child{order:1}
+  .dashboard-grid .card:last-child{order:2}
+}
+
+/* ===== FOOTER ===== */
+.footer{text-align:center;padding:32px 0 48px;color:#52525b;font-size:.75rem;border-top:1px solid rgba(30,30,46,.4)}
+</style>
+</head>
+<body>
+
+<!-- ========== NAVBAR ========== -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="#" class="navbar-logo" onclick="return false">
+      <div class="logo-icon">⚡</div>
+      <span>Núcleo Tático</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#" class="active">Início</a>
+      <a href="/questoes">Questões</a>
+      <a href="/simulados">Simulados</a>
+      <a href="/perfil">Perfil</a>
+    </div>
+    <div class="nav-right">
+      <button class="btn-logout" onclick="logout()">Sair</button>
+      <button class="hamburger" id="hamburgerBtn" onclick="toggleNav()">☰</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ========== MAIN ========== -->
+<main class="wrapper">
+
+  <!-- Welcome -->
+  <section class="welcome-section">
+    <div class="welcome-card">
+      <div class="welcome-left">
+        <div class="avatar" id="avatarLetter">M</div>
+        <div class="welcome-text">
+          <h1 id="welcomeTitle">Bem-vindo de volta!</h1>
+          <p id="welcomeSub">Continue seus estudos — a aprovação está mais perto.</p>
+        </div>
+      </div>
+      <div class="welcome-badge">🔥 <span id="streakBadge">0</span> dias seguidos</div>
+    </div>
+  </section>
+
+  <!-- Stats Row -->
+  <section class="stats-row" id="statsRow">
+    <div class="stat-card accent">
+      <div class="stat-label">Total Questões</div>
+      <div class="stat-value" id="statTotal">—</div>
+      <div class="stat-sub">respondidas</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">Acertos</div>
+      <div class="stat-value" id="statAcertos">—</div>
+      <div class="stat-sub"><span id="statAcertosSub">0% taxa de acerto</span></div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-label">Aproveitamento</div>
+      <div class="stat-value" id="statAproveitamento">—</div>
+      <div class="stat-sub">geral</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-label">Streak</div>
+      <div class="stat-value" id="statStreak">0</div>
+      <div class="stat-sub">dias consecutivos</div>
+    </div>
+  </section>
+
+  <!-- Dashboard Grid -->
+  <div class="dashboard-grid">
+
+    <!-- LEFT COLUMN: Progress + Activity -->
+    <div class="card">
+      <div class="card-header">
+        <h2>📊 Progresso por Categoria</h2>
+        <span class="card-count" id="catCount">0 categorias</span>
+      </div>
+      <div id="categoryProgress"></div>
+
+      <hr style="border:none;border-top:1px solid rgba(30,30,46,.5);margin:28px 0">
+
+      <div class="card-header">
+        <h2>🕐 Atividade Recente</h2>
+        <span class="card-count">últimas 5</span>
+      </div>
+      <ul class="activity-list" id="activityList"></ul>
+    </div>
+
+    <!-- RIGHT COLUMN: Quick Actions + Simulado -->
+    <div>
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-header"><h2>⚡ Ações Rápidas</h2></div>
+        <div class="quick-actions">
+          <a href="/questoes" class="btn-action">
+            <div class="action-icon primary">📝</div>
+            <div class="action-text">
+              Praticar Agora
+              <small>Questões aleatórias do banco</small>
+            </div>
+          </a>
+          <a href="/simulados" class="btn-action">
+            <div class="action-icon secondary">🎯</div>
+            <div class="action-text">
+              Simulado Rápido
+              <small>Teste seus conhecimentos</small>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h2>🏆 Último Simulado</h2></div>
+        <div id="lastSimuladoContent">
+          <div class="simulado-empty">Nenhum simulado realizado ainda.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">Núcleo Tático © 2026 — <span id="footerUser">estudante</span></footer>
+</main>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ===== UTILITIES ===== */
+  function getLS(key, def){
+    try{const v=localStorage.getItem(key);return v?JSON.parse(v):def}catch(e){return def}
+  }
+  function setLS(key,val){try{localStorage.setItem(key,JSON.stringify(val))}catch(e){}}
+  function qs(s){return document.querySelector(s)}
+  function qsa(s){return document.querySelectorAll(s)}
+
+  /* ===== SESSION CHECK ===== */
+  const session=getLS('nucleo_session',null);
+  if(!session||!session.loggedIn){
+    window.location.href='/';
+    return;
+  }
+  const nome=session.nome||'Estudante';
+  const email=session.email||'';
+
+  /* ===== DATA ===== */
+  const progress=getLS('nucleo_questions_progress',{});
+  const simHistory=getLS('nucleo_simulados_history',[]);
+  const usuarios=getLS('nucleo_usuarios',[]);
+
+  /* ===== CATEGORIES (fixed) ===== */
+  const categories=[
+    {key:'rl',label:'R. Lógica',correct:14,total:15},
+    {key:'port',label:'Português',correct:28,total:45},
+    {key:'dirconst',label:'Dir. Constitucional',correct:15,total:20},
+    {key:'info',label:'Informática',correct:8,total:12},
+    {key:'diradmin',label:'Dir. Administrativo',correct:12,total:17},
+    {key:'hist',label:'História',correct:12,total:14},
+    {key:'geo',label:'Geografia',correct:8,total:10},
+  ];
+
+  // category -> questionId prefix mapping for progress lookup
+  const catPatterns={
+    'rl':['rl','logica'],
+    'port':['port','portugues'],
+    'dirconst':['dirconst','constitucional'],
+    'info':['info','informatica'],
+    'diradmin':['diradmin','administrativo'],
+    'hist':['hist','historia'],
+    'geo':['geo','geografia'],
+  };
+
+  /* ===== COMPUTE REAL PROGRESS FROM localStorage ===== */
+  function computeCategoryProgress(){
+    const questIds=Object.keys(progress);
+    if(questIds.length===0){
+      // no progress data — use the hardcoded defaults as display
+      return categories.map(c=>({...c,answered:0,hits:0}));
+    }
+
+    return categories.map(cat=>{
+      const patterns=catPatterns[cat.key]||[cat.key];
+      let hits=0,answered=0;
+      for(const qid of questIds){
+        const lower=qid.toLowerCase();
+        const match=patterns.some(p=>lower.includes(p));
+        if(!match) continue;
+        answered++;
+        if(progress[qid].acertou) hits++;
+      }
+      // fallback to hardcoded defaults if we couldn't find any
+      if(answered===0){
+        return {...cat,answered:0,hits:0};
+      }
+      return {...cat,answered,hits,total:Math.max(cat.total,answered)};
+    });
+  }
+
+  /* ===== RENDER STATS ===== */
+  function renderStats(){
+    const catData=computeCategoryProgress();
+    let totalAnswered=0,totalHits=0;
+    for(const c of catData){totalAnswered+=c.answered;totalHits+=c.hits}
+    // if nothing answered, use hardcoded totals
+    if(totalAnswered===0){
+      totalAnswered=categories.reduce((s,c)=>s+c.total,0);
+      totalHits=categories.reduce((s,c)=>s+c.correct,0);
+    }
+    const pct=totalAnswered>0?Math.round((totalHits/totalAnswered)*100):0;
+
+    qs('#statTotal').textContent=totalAnswered;
+    qs('#statAcertos').textContent=totalHits;
+    qs('#statAcertosSub').textContent=pct+'% taxa de acerto';
+    qs('#statAproveitamento').textContent=pct+'%';
+
+    // streak: calculate from activity dates
+    const streak=calcStreak();
+    qs('#statStreak').textContent=streak;
+    qs('#streakBadge').textContent=streak;
+  }
+
+  /* ===== STREAK CALC ===== */
+  function calcStreak(){
+    const dates=Object.values(progress).map(e=>e.data?e.data.split('T')[0]:null).filter(Boolean);
+    if(!dates.length) return 0;
+    const unique=[...new Set(dates)].sort().reverse();
+    let streak=1;
+    const today=new Date();today.setHours(0,0,0,0);
+    const todayStr=today.toISOString().split('T')[0];
+    const yesterday=new Date(today);yesterday.setDate(yesterday.getDate()-1);
+    const yestStr=yesterday.toISOString().split('T')[0];
+    // If last activity is not today or yesterday, streak=0
+    if(unique[0]!==todayStr&&unique[0]!==yestStr) return 0;
+    for(let i=1;i<unique.length;i++){
+      const curr=new Date(unique[i-1]);
+      const prev=new Date(unique[i]);
+      const diff=(curr-prev)/(86400000);
+      if(Math.round(diff)===1) streak++;
+      else break;
+    }
+    return streak;
+  }
+
+  /* ===== RENDER CATEGORIES ===== */
+  function renderCategories(){
+    const catData=computeCategoryProgress();
+    const container=qs('#categoryProgress');
+    qs('#catCount').textContent=catData.length+' categorias';
+
+    let html='';
+    for(const c of catData){
+      const pct=c.total>0?Math.round((c.answered/c.total)*100):0;
+      let barClass='';
+      if(pct>=80) barClass='green';
+      else if(pct>=60) barClass='yellow';
+      else if(pct>=40) barClass='orange';
+      else barClass='red';
+
+      html+=`
+        <div class="category-item">
+          <div class="category-top">
+            <span class="category-name">${c.label}</span>
+            <span class="category-fraction">${c.answered}/${c.total}</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill ${barClass}" style="width:${pct}%"></div>
+          </div>
+        </div>`;
+    }
+    container.innerHTML=html;
+  }
+
+  /* ===== RENDER RECENT ACTIVITY ===== */
+  function renderActivity(){
+    const list=qs('#activityList');
+    const entries=Object.entries(progress);
+    if(!entries.length){
+      list.innerHTML=`
+        <li class="activity-empty">
+          <div class="activity-empty-icon">📭</div>
+          Nenhuma questão respondida ainda.<br>
+          <span style="font-size:.78rem">Comece a praticar agora!</span>
+        </li>`;
+      return;
+    }
+    const sorted=entries.sort((a,b)=>{
+      const da=a[1].data||'',db=b[1].data||'';
+      return db.localeCompare(da);
+    });
+    const last5=sorted.slice(0,5);
+    let html='';
+    for(const [qid,val] of last5){
+      const hit=val.acertou;
+      const dateStr=val.data?formatDate(val.data):'—';
+      html+=`
+        <li class="activity-item">
+          <div class="activity-left">
+            <span class="activity-dot ${hit?'hit':'miss'}"></span>
+            <span class="activity-question">${escapeHtml(qid)}</span>
+          </div>
+          <span class="activity-date">${dateStr}</span>
+        </li>`;
+    }
+    list.innerHTML=html;
+  }
+
+  function formatDate(d){
+    try{
+      const dt=new Date(d);
+      const day=String(dt.getDate()).padStart(2,'0');
+      const month=String(dt.getMonth()+1).padStart(2,'0');
+      return `${day}/${month}`;
+    }catch(e){return d.slice(0,5)}
+  }
+
+  function escapeHtml(t){
+    const d=document.createElement('div');d.textContent=t;return d.innerHTML;
+  }
+
+  /* ===== RENDER LAST SIMULADO ===== */
+  function renderLastSimulado(){
+    const container=qs('#lastSimuladoContent');
+    if(!simHistory.length){
+      container.innerHTML=`<div class="simulado-empty">Nenhum simulado realizado ainda.</div>`;
+      return;
+    }
+    const last=simHistory.sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')))[0];
+    const acertos=last.acertos||0;
+    const total=last.total||1;
+    const pct=Math.round((acertos/total)*100);
+    let scoreClass='bad';
+    if(pct>=70) scoreClass='good';
+    else if(pct>=40) scoreClass='ok';
+
+    const dateStr=last.data?formatDateFull(last.data):'';
+    const tempo=last.tempo||'';
+    const cat=last.categoria||'';
+
+    container.innerHTML=`
+      <div class="last-simulado">
+        ${dateStr?`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:.72rem;color:#52525b">${dateStr}</span>${cat?`<span style="font-size:.72rem;color:#52525b;font-family:'JetBrains Mono',monospace">${escapeHtml(cat)}</span>`:''}</div>`:''}
+        <div class="simulado-score-row">
+          <span class="simulado-score ${scoreClass}">${acertos}/${total}</span>
+          <span class="simulado-details">(${pct}%${tempo?` · ${escapeHtml(tempo)}`:''})</span>
+        </div>
+      </div>`;
+  }
+
+  function formatDateFull(d){
+    try{
+      const dt=new Date(d);
+      const day=String(dt.getDate()).padStart(2,'0');
+      const month=String(dt.getMonth()+1).padStart(2,'0');
+      const year=dt.getFullYear();
+      return `${day}/${month}/${year}`;
+    }catch(e){return String(d).slice(0,10)}
+  }
+
+  /* ===== WELCOME + AVATAR ===== */
+  function renderWelcome(){
+    qs('#welcomeTitle').textContent=`Bem-vindo de volta, ${nome}!`;
+    // if session has lastLogin, show it
+    const today=new Date();
+    const hour=today.getHours();
+    let greeting='Boa noite.';
+    if(hour<12) greeting='Bom dia!';
+    else if(hour<18) greeting='Boa tarde!';
+    qs('#welcomeSub').textContent=greeting+' Continue seus estudos — a aprovação está mais perto.';
+    qs('#avatarLetter').textContent=nome.charAt(0).toUpperCase();
+    qs('#footerUser').textContent=nome;
+  }
+
+  /* ===== NAV TOGGLE ===== */
+  window.toggleNav=function(){
+    document.getElementById('navLinks').classList.toggle('open');
+  };
+
+  /* ===== LOGOUT ===== */
+  window.logout=function(){
+    localStorage.removeItem('nucleo_session');
+    window.location.href='/';
+  };
+
+  /* ===== INIT ===== */
+  renderWelcome();
+  renderStats();
+  renderCategories();
+  renderActivity();
+  renderLastSimulado();
+
+})();
+</script>
+</body>
+</html>

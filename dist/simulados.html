@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulados — Núcleo Tático</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0f;--bg-card:#12121a;--bg-elevated:#1a1a24;--border:#1e1e2e;--border-hover:#2a2a3e;--text:#e4e4e7;--text-secondary:#a1a1aa;--text-muted:#52525b;--accent:#6366f1;--accent-hover:#818cf8;--accent-dim:rgba(99,102,241,0.1);--success:#22c55e;--error:#ef4444;--warning:#f59e0b;--radius:8px;--radius-lg:12px;--transition:.2s ease;--font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-hover);border-radius:3px}
+
+/* Navbar */
+.navbar{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.5rem;background:rgba(10,10,15,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+.navbar .logo{display:flex;align-items:center;gap:.5rem;font-size:1rem;font-weight:700;color:var(--text)}
+.navbar .logo span{color:var(--accent)}
+.navbar .nav-links{display:flex;gap:1rem;font-size:.8125rem}
+.navbar .nav-links a{color:var(--text-secondary);transition:color var(--transition)}
+.navbar .nav-links a:hover{color:var(--text)}
+
+/* Cards/Components */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem}
+.glass-card{background:rgba(18,18,26,.8);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.75rem 1.5rem;border-radius:var(--radius);font-weight:600;font-size:.875rem;border:none;cursor:pointer;transition:all var(--transition);font-family:var(--font)}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#fff;box-shadow:0 2px 12px rgba(99,102,241,.3)}
+.btn-primary:hover{transform:scale(1.03);box-shadow:0 4px 20px rgba(99,102,241,.4)}
+.btn-secondary{background:var(--bg-elevated);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--border-hover)}
+.btn-ghost{background:transparent;color:var(--text-secondary);border:1px solid transparent}
+.btn-ghost:hover{color:var(--text);background:var(--accent-dim)}
+.btn-sm{padding:.5rem 1rem;font-size:.8125rem}
+.btn-success{background:var(--success);color:#fff}
+.btn-success:hover{background:#16a34a}
+.btn-full{width:100%}
+
+/* Config Screen */
+#configScreen{max-width:600px;margin:2rem auto;padding:0 1rem}
+#configScreen h1{font-size:1.5rem;font-weight:700;text-align:center;margin-bottom:.5rem}
+#configScreen h1 span{color:var(--accent)}
+#configScreen .subtitle{text-align:center;color:var(--text-secondary);font-size:.875rem;margin-bottom:1.5rem}
+.config-group{margin-bottom:1.25rem}
+.config-group label{display:block;font-size:.8125rem;font-weight:600;color:var(--text-secondary);margin-bottom:.5rem}
+.slider-row{display:flex;align-items:center;gap:1rem}
+.slider-row input[type=range]{flex:1;appearance:none;height:4px;background:var(--border-hover);border-radius:2px;outline:none}
+.slider-row input[type=range]::-webkit-slider-thumb{appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 0 8px rgba(99,102,241,.4)}
+.slider-row .count-display{font-family:var(--mono);font-size:1.25rem;font-weight:700;color:var(--accent);min-width:2.5rem;text-align:center}
+.pill-group{display:flex;flex-wrap:wrap;gap:.5rem}
+.pill{padding:.375rem .75rem;border-radius:100px;font-size:.75rem;font-weight:500;border:1px solid var(--border);background:transparent;color:var(--text-secondary);cursor:pointer;transition:all var(--transition);font-family:var(--font)}
+.pill:hover{border-color:var(--accent);color:var(--text)}
+.pill.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);font-weight:600}
+.pill.success{background:rgba(34,197,94,.1);border-color:var(--success);color:var(--success)}
+
+/* Active Simulado Screen */
+#activeScreen{max-width:720px;margin:1.5rem auto;padding:0 1rem}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:1rem;flex-wrap:wrap}
+.top-bar .q-counter{font-family:var(--mono);font-size:.8125rem;color:var(--text-secondary)}
+.top-bar .q-counter strong{color:var(--text);font-size:1rem}
+.timer{font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:.5rem}
+.timer .clock{font-size:1.25rem}
+.timer.warning{color:var(--warning);animation:pulse 1s infinite}
+.timer.danger{color:var(--error);animation:pulse .5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.progress-bar{height:4px;background:var(--border-hover);border-radius:2px;margin-bottom:1.5rem;overflow:hidden}
+.progress-bar .fill{height:100%;background:linear-gradient(90deg,var(--accent),#8b5cf6);border-radius:2px;transition:width .5s ease}
+
+.question-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1rem}
+.question-card .q-meta{display:flex;gap:.5rem;margin-bottom:.75rem;font-size:.6875rem}
+.question-card .q-meta .badge{background:var(--accent-dim);color:var(--accent);padding:2px 8px;border-radius:4px}
+.question-card .q-meta .banca-badge{background:rgba(255,255,255,.05);color:var(--text-secondary);padding:2px 8px;border-radius:4px}
+.question-card .enunciado{font-size:.9375rem;line-height:1.7;margin-bottom:1.25rem;color:var(--text)}
+.alternativas{display:flex;flex-direction:column;gap:.5rem}
+.alt-item{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all var(--transition);background:transparent;font-size:.875rem;line-height:1.5;font-family:var(--font);color:var(--text);text-align:left;width:100%}
+.alt-item:hover{border-color:var(--accent);background:var(--accent-dim)}
+.alt-item .letter{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--bg-elevated);font-family:var(--mono);font-size:.75rem;font-weight:700;color:var(--text-secondary);flex-shrink:0;transition:all var(--transition)}
+.alt-item:hover .letter{background:var(--accent);color:#fff}
+.alt-item.selected{border-color:var(--accent);background:var(--accent-dim)}
+.alt-item.selected .letter{background:var(--accent);color:#fff}
+.alt-item.correct{border-color:var(--success);background:rgba(34,197,94,.08)}
+.alt-item.correct .letter{background:var(--success);color:#fff}
+.alt-item.wrong{border-color:var(--error);background:rgba(239,68,68,.08)}
+.alt-item.wrong .letter{background:var(--error);color:#fff}
+.alt-item.disabled{pointer-events:none;opacity:.7}
+.explicacao-box{background:rgba(99,102,241,.05);border:1px solid var(--accent-dim);border-radius:var(--radius);padding:1rem;margin-top:1rem;font-size:.8125rem;line-height:1.6}
+.explicacao-box strong{color:var(--accent)}
+.action-row{display:flex;gap:.75rem;justify-content:center;margin-top:1.25rem}
+
+/* Results Screen */
+#resultScreen{max-width:600px;margin:2rem auto;padding:0 1rem}
+.score-circle{width:120px;height:120px;margin:0 auto 1rem;position:relative}
+.score-circle svg{width:100%;height:100%;transform:rotate(-90deg)}
+.score-circle .score-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-circle .score-text .num{font-family:var(--mono);font-size:2rem;font-weight:800;color:var(--text)}
+.score-circle .score-text .label{font-size:.6875rem;color:var(--text-secondary);margin-top:.125rem}
+.result-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin:1.5rem 0}
+.result-stat{text-align:center;padding:1rem;background:var(--bg-elevated);border-radius:var(--radius)}
+.result-stat .value{font-family:var(--mono);font-size:1.25rem;font-weight:700;color:var(--text)}
+.result-stat .label{font-size:.6875rem;color:var(--text-secondary);margin-top:.25rem}
+.category-breakdown{margin:1.25rem 0}
+.cat-bar{margin-bottom:.75rem}
+.cat-bar .cat-label{display:flex;justify-content:space-between;font-size:.8125rem;margin-bottom:.25rem}
+.cat-bar .cat-label span:first-child{color:var(--text)}
+.cat-bar .cat-label span:last-child{font-family:var(--mono);color:var(--text-secondary)}
+.cat-bar .bar-track{height:6px;background:var(--bg-elevated);border-radius:3px;overflow:hidden}
+.cat-bar .bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),#8b5cf6);transition:width 1s ease}
+
+/* History */
+.history-section{margin-top:2rem}
+.history-section h3{font-size:1rem;font-weight:600;margin-bottom:.75rem;color:var(--text-secondary)}
+.history-grid{display:flex;flex-direction:column;gap:.5rem}
+.history-item{display:flex;justify-content:space-between;align-items:center;padding:.625rem .75rem;background:var(--bg-elevated);border-radius:var(--radius);font-size:.8125rem}
+.history-item .h-date{color:var(--text-secondary)}
+.history-item .h-score{font-family:var(--mono);color:var(--text)}
+.history-item .h-score.good{color:var(--success)}
+
+/* Hidden */
+.hidden{display:none!important}
+
+/* Responsive */
+@media(max-width:640px){
+  .result-stats{grid-template-columns:1fr 1fr}
+  .top-bar{flex-direction:column;align-items:stretch}
+}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="logo"><span>⚡</span> Núcleo Tático</div>
+  <div class="nav-links">
+    <a href="/">Início</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/questoes">Questões</a>
+    <a href="/admin" style="color:var(--text-muted);font-size:.75rem">Admin</a>
+  </div>
+</nav>
+
+<!-- CONFIG SCREEN -->
+<div id="configScreen">
+  <h1>📝 Simulado <span>Tático</span></h1>
+  <p class="subtitle">Configure seu simulado e teste seus conhecimentos sob pressão</p>
+  <div class="glass-card">
+    <div class="config-group">
+      <label>Número de Questões</label>
+      <div class="slider-row">
+        <input type="range" id="qCountRange" min="5" max="50" value="20" oninput="document.getElementById('qCountDisplay').textContent=this.value">
+        <span class="count-display" id="qCountDisplay">20</span>
+      </div>
+    </div>
+    <div class="config-group">
+      <label>Categorias</label>
+      <div class="pill-group" id="categoryFilters">
+        <span class="pill active" data-cat="all">Todas</span>
+      </div>
+    </div>
+    <div class="config-group">
+      <label>Bancas</label>
+      <div class="pill-group" id="bancaFilters">
+        <span class="pill active" data-banca="all">Todas</span>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.5rem">
+      <span style="font-size:.75rem;color:var(--text-muted)">⏱ 1:30 min por questão</span>
+    </div>
+    <button class="btn btn-primary btn-full" style="margin-top:1rem" onclick="startSimulado()">🚀 Iniciar Simulado</button>
+  </div>
+</div>
+
+<!-- ACTIVE SIMULADO -->
+<div id="activeScreen" class="hidden">
+  <div class="top-bar">
+    <div class="q-counter">Questão <strong id="currentQ">1</strong>/<span id="totalQ">20</span></div>
+    <div class="timer" id="timerDisplay"><span class="clock">⏱</span> <span id="timeLeft">30:00</span></div>
+  </div>
+  <div class="progress-bar"><div class="fill" id="progressFill" style="width:5%"></div></div>
+  <div id="questionContainer"></div>
+  <div class="action-row">
+    <button class="btn btn-sm btn-ghost" id="reviewBtn" onclick="prevQuestion()">← Anterior</button>
+    <button class="btn btn-sm btn-secondary" onclick="confirmFinish()">Finalizar Simulado</button>
+    <button class="btn btn-sm btn-ghost" id="nextBtn" onclick="nextQuestion()">Próxima →</button>
+  </div>
+</div>
+
+<!-- RESULTS SCREEN -->
+<div id="resultScreen" class="hidden">
+  <h1 style="text-align:center;font-size:1.5rem;font-weight:700;margin-bottom:.5rem">📊 Resultado</h1>
+  <p class="subtitle" style="text-align:center" id="resultDate"></p>
+  <div class="card" style="text-align:center;padding:2rem">
+    <div class="score-circle">
+      <svg viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="54" fill="none" stroke="var(--border-hover)" stroke-width="8"/>
+        <circle cx="60" cy="60" r="54" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round" id="scoreArc" stroke-dasharray="339.292" stroke-dashoffset="339.292"/>
+      </svg>
+      <div class="score-text">
+        <span class="num" id="resultScore">0/0</span>
+        <span class="label">acertos</span>
+      </div>
+    </div>
+    <div class="result-stats">
+      <div class="result-stat"><div class="value" id="resultPct">0%</div><div class="label">Aproveitamento</div></div>
+      <div class="result-stat"><div class="value" id="resultErros">0</div><div class="label">Erros</div></div>
+      <div class="result-stat"><div class="value" id="resultTempo">00:00</div><div class="label">Tempo Total</div></div>
+    </div>
+  </div>
+  <div class="category-breakdown" id="resultCategories"></div>
+  <div style="display:flex;gap:.75rem;justify-content:center;margin-top:1.25rem">
+    <button class="btn btn-secondary" onclick="reviewWrong()">📖 Revisar Erros</button>
+    <button class="btn btn-primary" onclick="location.reload()">🔄 Novo Simulado</button>
+  </div>
+  <div class="history-section" id="historySection"></div>
+</div>
+
+<script>
+let questoes = [];
+let filtered = [];
+let currentIndex = 0;
+let answers = [];
+let timer = null;
+let timeRemaining = 0;
+let totalTime = 0;
+let startedAt = null;
+let reviewing = false;
+let wrongQuestions = [];
+
+const CATEGORIES = ['Raciocínio Lógico','Língua Portuguesa','Direito Constitucional','Direito Administrativo','Informática','História do Brasil','Geografia'];
+const BANCAS = ['CESPE','FCC','FGV','VUNESP','ESAF','EsPCEx','EEAr','EFOMM','CN','IBADE'];
+const LETTERS = ['A','B','C','D','E'];
+
+function init(){
+  questoes = JSON.parse(localStorage.getItem('nucleo_questoes')||'[]');
+  if(questoes.length===0 && typeof window.QUESTOES!=='undefined'){
+    questoes = [...window.QUESTOES];
+    localStorage.setItem('nucleo_questoes', JSON.stringify(questoes));
+  }
+  if(questoes.length===0){
+    document.getElementById('configScreen').innerHTML = '<div class="card" style="text-align:center;max-width:500px;margin:2rem auto"><h2 style="margin-bottom:.5rem">⚠️ Nenhuma questão disponível</h2><p style="color:var(--text-secondary)">Vá para a página de <a href="/questoes">Questões</a> primeiro para carregar o banco de dados.</p></div>';
+    return;
+  }
+  setupFilters();
+  renderHistory();
+}
+
+function setupFilters(){
+  // Category pills
+  const catContainer = document.getElementById('categoryFilters');
+  CATEGORIES.forEach(c=>{
+    const pill = document.createElement('span');
+    pill.className='pill';
+    pill.dataset.cat=c;
+    pill.textContent=c;
+    pill.onclick=()=>toggleFilter(pill,'cat');
+    catContainer.appendChild(pill);
+  });
+  // Banca pills
+  const banContainer = document.getElementById('bancaFilters');
+  BANCAS.forEach(b=>{
+    const pill = document.createElement('span');
+    pill.className='pill';
+    pill.dataset.banca=b;
+    pill.textContent=b;
+    pill.onclick=()=>toggleFilter(pill,'banca');
+    banContainer.appendChild(pill);
+  });
+}
+
+function toggleFilter(el, type){
+  if(el.dataset[type]==='all' || el.dataset.cat==='all' || el.dataset.banca==='all'){
+    // "Todas" clicked — toggle all
+    document.querySelectorAll(`[data-${type}]`).forEach(p=>p.classList.remove('active'));
+    el.classList.add('active');
+  } else {
+    const allPill = document.querySelector(`[data-${type}="all"]`);
+    if(allPill) allPill.classList.remove('active');
+    el.classList.toggle('active');
+    // If none selected, re-enable "Todas"
+    const active = document.querySelectorAll(`[data-${type}].active`);
+    if(active.length===0 && allPill) allPill.classList.add('active');
+  }
+}
+
+function getSelectedFilters(type){
+  const active = document.querySelectorAll(`[data-${type}].active`);
+  const all = document.querySelector(`[data-${type}="all"]`);
+  if(all && all.classList.contains('active')) return [];
+  return Array.from(active).map(p=>p.dataset[type]).filter(v=>v!=='all');
+}
+
+function startSimulado(){
+  const count = parseInt(document.getElementById('qCountRange').value);
+  let selectedCats = getSelectedFilters('cat');
+  let selectedBancas = getSelectedFilters('banca');
+
+  filtered = questoes.filter(q=>{
+    if(selectedCats.length && !selectedCats.includes(q.categoria)) return false;
+    if(selectedBancas.length && !selectedBancas.includes(q.banca)) return false;
+    return true;
+  });
+
+  if(filtered.length===0){alert('Nenhuma questão com esses filtros. Tente selecionar menos filtros.');return}
+
+  // Shuffle and pick
+  filtered = [...filtered].sort(()=>Math.random()-.5).slice(0, Math.min(count, filtered.length));
+  currentIndex = 0;
+  answers = new Array(filtered.length).fill(null);
+  timeRemaining = filtered.length * 90; // 90 seconds per question
+  totalTime = timeRemaining;
+  startedAt = Date.now();
+
+  document.getElementById('configScreen').classList.add('hidden');
+  document.getElementById('activeScreen').classList.remove('hidden');
+  document.getElementById('totalQ').textContent = filtered.length;
+  showQuestion();
+  startTimer();
+}
+
+function showQuestion(){
+  const q = filtered[currentIndex];
+  const total = filtered.length;
+  document.getElementById('currentQ').textContent = currentIndex+1;
+  document.getElementById('totalQ').textContent = total;
+  document.getElementById('progressFill').style.width = ((currentIndex+1)/total*100)+'%';
+
+  const prevAns = answers[currentIndex];
+  const container = document.getElementById('questionContainer');
+  container.innerHTML = `
+    <div class="question-card">
+      <div class="q-meta">
+        <span class="badge">${q.categoria}</span>
+        <span class="banca-badge">${q.banca}</span>
+      </div>
+      <div class="enunciado">${q.enunciado}</div>
+      <div class="alternativas">
+        ${q.alternativas.map((alt,i)=>`
+          <button class="alt-item ${prevAns!==null?(i===q.correta?'correct':(i===prevAns?'wrong':'')):(i===prevAns?'selected':'')} ${prevAns!==null?'disabled':''}"
+            onclick="${prevAns===null?`selectAnswer(${i})`:''}"
+            ${prevAns!==null?'disabled':''}>
+            <span class="letter">${LETTERS[i]}</span>
+            <span>${alt}</span>
+          </button>
+        `).join('')}
+      </div>
+      ${prevAns!==null?`
+        <div class="explicacao-box">
+          <strong>${prevAns===q.correta?'✅ Correto!':'❌ Incorreto.'}</strong>
+          ${q.explicacao}
+        </div>
+      `:''}
+    </div>
+  `;
+  document.getElementById('reviewBtn').style.visibility = currentIndex>0?'visible':'hidden';
+  document.getElementById('nextBtn').textContent = currentIndex<total-1?'Próxima →':'Finalizar';
+}
+
+function selectAnswer(idx){
+  const q = filtered[currentIndex];
+  answers[currentIndex] = idx;
+  showQuestion();
+  // Auto-advance after short delay
+  setTimeout(()=>{
+    if(currentIndex < filtered.length-1) nextQuestion();
+    else confirmFinish();
+  }, 800);
+}
+
+function nextQuestion(){
+  if(currentIndex < filtered.length-1){
+    currentIndex++;
+    showQuestion();
+  } else {
+    confirmFinish();
+  }
+}
+
+function prevQuestion(){
+  if(currentIndex > 0){
+    currentIndex--;
+    showQuestion();
+  }
+}
+
+function startTimer(){
+  updateTimerDisplay();
+  timer = setInterval(()=>{
+    timeRemaining--;
+    updateTimerDisplay();
+    if(timeRemaining <= 0){
+      clearInterval(timer);
+      finishSimulado();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay(){
+  const m = Math.floor(timeRemaining/60);
+  const s = timeRemaining%60;
+  const el = document.getElementById('timeLeft');
+  el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const timerEl = document.getElementById('timerDisplay');
+  timerEl.className = 'timer';
+  if(timeRemaining < 30) timerEl.classList.add('danger');
+  else if(timeRemaining < 120) timerEl.classList.add('warning');
+}
+
+function confirmFinish(){
+  const unanswered = answers.filter(a=>a===null).length;
+  if(unanswered > 0 && !confirm(`${unanswered} questão(ões) sem resposta. Finalizar mesmo assim?`)) return;
+  clearInterval(timer);
+  finishSimulado();
+}
+
+function finishSimulado(){
+  reviewing = false;
+  let acertos = 0;
+  const catResults = {};
+  filtered.forEach((q,i)=>{
+    if(!catResults[q.categoria]) catResults[q.categoria]={acertos:0,total:0};
+    catResults[q.categoria].total++;
+    if(answers[i]===q.correta){acertos++;catResults[q.categoria].acertos++}
+  });
+
+  const total = filtered.length;
+  const tempo = Math.floor((Date.now()-startedAt)/1000);
+  const pct = Math.round(acertos/total*100);
+
+  document.getElementById('activeScreen').classList.add('hidden');
+  document.getElementById('resultScreen').classList.remove('hidden');
+  document.getElementById('resultDate').textContent = new Date().toLocaleString('pt-BR');
+  document.getElementById('resultScore').textContent = `${acertos}/${total}`;
+  document.getElementById('resultPct').textContent = `${pct}%`;
+  document.getElementById('resultErros').textContent = total-acertos;
+  document.getElementById('resultTempo').textContent = `${Math.floor(tempo/60)}:${String(tempo%60).padStart(2,'0')}`;
+
+  // Score circle animation
+  const arc = document.getElementById('scoreArc');
+  const circumference = 339.292;
+  const offset = circumference - (pct/100)*circumference;
+  setTimeout(()=>{arc.style.transition='stroke-dashoffset 1.5s ease';arc.style.strokeDashoffset=offset},100);
+
+  // Category breakdown
+  const catsHtml = Object.entries(catResults).map(([cat,data])=>{
+    const p = Math.round(data.acertos/data.total*100);
+    return `<div class="cat-bar">
+      <div class="cat-label"><span>${cat}</span><span>${data.acertos}/${data.total} (${p}%)</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${p}%"></div></div>
+    </div>`;
+  }).join('');
+  document.getElementById('resultCategories').innerHTML = `<h3 style="font-size:.875rem;color:var(--text-secondary);margin-bottom:.75rem">📊 Por Categoria</h3>${catsHtml}`;
+
+  // Save to history
+  const history = JSON.parse(localStorage.getItem('nucleo_simulados_history')||'[]');
+  history.unshift({data:new Date().toISOString(),acertos,total,tempo,questoes:filtered.map(q=>q.id)});
+  localStorage.setItem('nucleo_simulados_history', JSON.stringify(history));
+  renderHistory();
+}
+
+function reviewWrong(){
+  reviewing = true;
+  wrongQuestions = filtered.filter((q,i)=>answers[i]!==q.correta);
+  if(wrongQuestions.length===0){alert('Parabéns! Você acertou todas! 🎉');return}
+  currentIndex = 0;
+  document.getElementById('resultScreen').classList.add('hidden');
+  document.getElementById('activeScreen').classList.remove('hidden');
+  document.getElementById('totalQ').textContent = wrongQuestions.length;
+  showReviewQuestion();
+}
+
+function showReviewQuestion(){
+  const q = wrongQuestions[currentIndex];
+  const total = wrongQuestions.length;
+  document.getElementById('currentQ').textContent = currentIndex+1;
+  document.getElementById('totalQ').textContent = total;
+  document.getElementById('progressFill').style.width = ((currentIndex+1)/total*100)+'%';
+  document.getElementById('timerDisplay').innerHTML = '<span style="font-size:.8125rem;color:var(--text-secondary)">📖 Modo Revisão</span>';
+  document.getElementById('reviewBtn').style.visibility = currentIndex>0?'visible':'hidden';
+  document.getElementById('nextBtn').textContent = currentIndex<total-1?'Próxima →':'Voltar ao Resultado';
+  document.getElementById('nextBtn').onclick = ()=>{
+    if(currentIndex<total-1){currentIndex++;showReviewQuestion()}
+    else{document.getElementById('activeScreen').classList.add('hidden');document.getElementById('resultScreen').classList.remove('hidden')}
+  };
+
+  const container = document.getElementById('questionContainer');
+  container.innerHTML = `
+    <div class="question-card">
+      <div class="q-meta">
+        <span class="badge">${q.categoria}</span>
+        <span class="banca-badge">${q.banca}</span>
+        <span style="color:var(--error);font-weight:600;font-size:.6875rem">❌ VOCÊ ERROU</span>
+      </div>
+      <div class="enunciado">${q.enunciado}</div>
+      <div class="alternativas">
+        ${q.alternativas.map((alt,i)=>`
+          <div class="alt-item disabled ${i===q.correta?'correct':'wrong'}">
+            <span class="letter">${LETTERS[i]}</span>
+            <span>${alt} ${i===q.correta?'✅':''}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div class="explicacao-box"><strong>📖 Explicação:</strong> ${q.explicacao}</div>
+    </div>
+  `;
+}
+
+function renderHistory(){
+  const history = JSON.parse(localStorage.getItem('nucleo_simulados_history')||'[]');
+  if(history.length===0) return;
+  const section = document.getElementById('historySection');
+  section.innerHTML = `
+    <h3>📋 Últimos Simulados</h3>
+    <div class="history-grid">
+      ${history.slice(0,10).map(h=>{
+        const pct = Math.round(h.acertos/h.total*100);
+        return `<div class="history-item">
+          <span class="h-date">${new Date(h.data).toLocaleDateString('pt-BR')}</span>
+          <span class="h-score ${pct>=70?'good':''}">${h.acertos}/${h.total} (${pct}%)</span>
+          <span style="font-size:.75rem;color:var(--text-muted)">${Math.floor(h.tempo/60)}:${String(h.tempo%60).padStart(2,'0')}</span>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
