@@ -1,205 +1,97 @@
-# 🎯 Núcleo Tático - Plataforma Educacional Premium
+<div align="center">
 
-**Plataforma de preparação para concursos públicos com inteligência artificial, personalização e resultados mensuráveis.**
+# NÚCLEO TÁTICO PLATFORM
 
-## 🚀 Visão
+### Arquitetura full-stack para uma plataforma educacional orientada por dados
 
-Transformar a preparação para concursos públicos através de uma plataforma inteligente que combina conteúdo premium, algoritmos de personalização e métricas de desempenho para maximizar chances de aprovação.
+[![Status](https://img.shields.io/badge/status-base%20de%20produto-F59E0B?style=flat-square)](#status-e-escopo)
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=111827)](frontend/)
+[![Node.js](https://img.shields.io/badge/Node.js-API-339933?style=flat-square&logo=nodedotjs&logoColor=white)](backend/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Prisma-4169E1?style=flat-square&logo=postgresql&logoColor=white)](backend/)
+[![Site](https://img.shields.io/badge/ABRIR-NÚCLEO%20TÁTICO-D4AF37?style=for-the-badge)](https://www.nucleotatico.com)
 
-## 🏗️ Arquitetura
-
-```
-nucleo-tatico-platform/
-├── frontend/          # Aplicação React/Next.js
-├── backend/           # API Node.js/Express
-├── shared/           # Código compartilhado (types, utils)
-├── docs/             # Documentação
-└── scripts/          # Scripts de automação
-```
-
-## 🎯 Funcionalidades Principais
-
-### 🎓 Conteúdo Educacional
-- Cursos premium por área de concurso
-- Módulos estruturados com progressão lógica
-- Exercícios com feedback imediato
-- Simulados realistas
-
-### 🧠 Inteligência Artificial
-- Sistema de recomendação neural
-- Análise preditiva de desempenho
-- Personalização dinâmica de conteúdo
-- Otimização de plano de estudo
-
-### 📈 Métricas e Analytics
-- Dashboard de progresso personalizado
-- KPIs educacionais e de negócio
-- Alertas e insights preditivos
-- Relatórios de desempenho
-
-### 🎨 Experiência do Usuário
-- Design System próprio e consistente
-- Interface otimizada para aprendizado
-- Experiência mobile-first
-- Acessibilidade (WCAG 2.1)
-
-## 🛠️ Tecnologias
-
-### Frontend
-- **React 18** com TypeScript
-- **Next.js 14** (App Router)
-- **Tailwind CSS** para estilização
-- **shadcn/ui** para componentes
-- **TanStack Query** para gerenciamento de estado
-- **Zustand** para estado global
-
-### Backend
-- **Node.js** com TypeScript
-- **Express.js** para API
-- **PostgreSQL** com Prisma ORM
-- **Redis** para cache e sessões
-- **JWT** para autenticação
-- **Socket.io** para real-time
-
-### IA/Machine Learning
-- **TensorFlow.js** para modelos no browser
-- **Python** para processamento pesado
-- **scikit-learn** para algoritmos clássicos
-- **LangChain** para processamento de texto
-
-### Infraestrutura
-- **Docker** para containerização
-- **PostgreSQL** para dados estruturados
-- **Redis** para cache
-- **Prometheus/Grafana** para monitoramento
-- **GitHub Actions** para CI/CD
-
-## 🚀 Começando
-
-### Pré-requisitos
-- Node.js 18+
-- Docker e Docker Compose
-- Git
-
-### Instalação Local
-
-1. **Clone o repositório:**
-```bash
-git clone https://github.com/nucleo-tatico/platform.git
-cd nucleo-tatico-platform
-```
-
-2. **Configure variáveis de ambiente:**
-```bash
-cp .env.example .env
-# Edite .env com suas configurações
-```
-
-3. **Inicie com Docker:**
-```bash
-npm run docker:up
-```
-
-4. **Ou instale localmente:**
-```bash
-npm run setup
-npm run dev
-```
-
-### URLs de Desenvolvimento
-- **Frontend:** http://localhost:5173
-- **Backend API:** http://localhost:3000
-- **API Docs:** http://localhost:3000/api-docs
-- **Grafana:** http://localhost:3001 (admin/admin)
-- **Prometheus:** http://localhost:9090
-
-## 📁 Estrutura do Projeto
-
-### Frontend (`/frontend`)
-```
-frontend/
-├── src/
-│   ├── app/          # Next.js App Router
-│   ├── components/   # Componentes React
-│   ├── lib/          # Utilitários, hooks
-│   ├── styles/       # Estilos globais
-│   └── types/        # Tipos TypeScript
-├── public/           # Assets estáticos
-└── package.json
-```
-
-### Backend (`/backend`)
-```
-backend/
-├── src/
-│   ├── api/          # Rotas da API
-│   ├── middleware/   # Middlewares
-│   ├── models/       # Modelos de dados
-│   ├── services/     # Lógica de negócio
-│   ├── utils/        # Utilitários
-│   └── types/        # Tipos TypeScript
-├── prisma/           # Schema e migrations
-└── package.json
-```
-
-## 🧪 Testes
-
-```bash
-# Todos os testes
-npm run test
-
-# Testes do frontend
-npm run test:frontend
-
-# Testes do backend
-npm run test:backend
-
-# Testes E2E
-npm run test:e2e
-```
-
-## 📈 Deployment
-
-### Produção
-```bash
-# Build para produção
-npm run build
-
-# Deploy com Docker
-docker-compose -f docker-compose.prod.yml up -d
-```
-
-### Staging
-```bash
-# Deploy para staging
-npm run deploy:staging
-```
-
-## 🤝 Contribuindo
-
-1. Fork o projeto
-2. Crie uma branch (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-## 📄 Licença
-
-Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
-
-## 👥 Equipe
-
-- **Matheus Florindo** - Fundador & Product Owner
-- **Equipe de Desenvolvimento** - Engenharia
-- **Equipe de Conteúdo** - Especialistas em concursos
-- **Equipe de Design** - UX/UI
-
-## 📞 Contato
-
-- **Website:** [nucleotatico.com.br](https://nucleotatico.com.br)
-- **Email:** contato@nucleotatico.com.br
-- **Telegram:** @nucleotatico
+</div>
 
 ---
 
-**"Não negocie com sua mente!"** - Foco em ação e resultados mensuráveis. ⚡
+## Visão geral
+
+O **Núcleo Tático Platform** é a base técnica de uma plataforma para preparação de concursos públicos. O monorepo organiza frontend, backend e tipos compartilhados, com foco em evolução modular, indicadores de aprendizagem e personalização futura.
+
+## Arquitetura
+
+| Workspace | Responsabilidade | Stack principal |
+|---|---|---|
+| `frontend/` | interface, navegação e visualização de progresso | React, TypeScript, Vite, TanStack Query, Zustand |
+| `backend/` | API, autenticação e regras de negócio | Node.js, Express, TypeScript |
+| `shared/` | tipos e utilitários comuns | TypeScript |
+| persistência | dados estruturados e migrações | PostgreSQL, Prisma |
+| apoio | cache, segurança e comunicação | Redis, JWT, Socket.io |
+
+## Capacidades projetadas
+
+- organização de cursos, módulos e exercícios;
+- plano de estudo e acompanhamento de progresso;
+- indicadores educacionais;
+- autenticação e perfis;
+- personalização de conteúdo;
+- recomendações assistidas por dados;
+- experiência responsiva.
+
+## Execução local
+
+### Pré-requisitos
+
+- Node.js 18+;
+- npm;
+- PostgreSQL;
+- Redis quando os módulos dependentes estiverem habilitados.
+
+```bash
+git clone https://github.com/matheusflorindo32/nucleo-tatico-platform.git
+cd nucleo-tatico-platform
+npm install
+cp .env.example .env
+npm run dev
+```
+
+Comandos úteis:
+
+```bash
+npm run build
+npm run test
+npm run lint
+npm run type-check
+```
+
+## Organização
+
+```text
+nucleo-tatico-platform/
+├── frontend/
+├── backend/
+├── shared/
+├── docs/
+├── scripts/
+└── package.json
+```
+
+## Status e escopo
+
+Este repositório representa uma **base de produto em desenvolvimento**. Funcionalidades descritas como projetadas ou planejadas não devem ser interpretadas como serviço público já disponível. O produto institucional publicado e suas entregas devem ser consultados no [site oficial](https://www.nucleotatico.com).
+
+Modelos de IA, recomendações e métricas educacionais exigem validação, transparência, proteção de dados e supervisão humana antes de uso em produção.
+
+## Competências demonstradas
+
+`Arquitetura Full-Stack` · `React` · `Node.js` · `TypeScript` · `PostgreSQL` · `Prisma` · `Produto Educacional`
+
+---
+
+<div align="center">
+
+**“Não negocie com sua mente.”**  
+Desenvolvido por **Matheus Florindo de Deus**  
+[Núcleo Tático](https://www.nucleotatico.com) · [Tropa Científica](https://www.tropacientifica.com) · [GitHub](https://github.com/matheusflorindo32)
+
+</div>
