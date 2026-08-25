@@ -8,7 +8,7 @@ services:
     environment:
       POSTGRES_DB: nucleo_tatico
       POSTGRES_USER: nucleo_admin
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-nucleo_secret_2026}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be set in .env}
     ports:
       - "5432:5432"
     volumes:
@@ -48,9 +48,10 @@ services:
         condition: service_healthy
     environment:
       NODE_ENV: development
-      DATABASE_URL: postgresql://nucleo_admin:nucleo_secret_2026@postgres:5432/nucleo_tatico
+      DATABASE_URL: postgresql://nucleo_admin:${DB_PASSWORD:?DB_PASSWORD must be set in .env}@postgres:5432/nucleo_tatico
       REDIS_URL: redis://redis:6379
-      JWT_SECRET: ${JWT_SECRET:-nucleo_jwt_secret_2026_change_in_production}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set in .env}
+      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY:?SUPABASE_SERVICE_KEY must be set in .env}
       PORT: 3000
     ports:
       - "3000:3000"
@@ -69,7 +70,7 @@ services:
       - backend
     environment:
       NODE_ENV: development
-      VITE_API_URL: http://localhost:3000
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
     ports:
       - "5173:5173"
     volumes:
@@ -102,7 +103,7 @@ services:
     ports:
       - "3001:3000"
     environment:
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:?GRAFANA_PASSWORD must be set in .env}
     volumes:
       - grafana_data:/var/lib/grafana
       - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards

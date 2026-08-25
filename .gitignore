@@ -8,11 +8,18 @@ dist/
 build/
 *.tsbuildinfo
 
-# Environment
+# Environment / secrets
 .env
-.env.local
-.env.*.local
-.env.production
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+secrets/
+credentials/
 
 # Database
 prisma/*.db
